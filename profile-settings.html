@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Settings - Scanova</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --accent: #e74c3c;
+        --accent-dark: #c0392b;
+        --bg-light: #f5f7fa;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-dark);
+        min-height: 100vh;
+        padding: 1.5rem;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 2rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+      }
+
+      h1 {
+        color: var(--primary);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+      }
+
+      .label-optional::after {
+        content: " (Optional)";
+        color: #888;
+        font-size: 0.85rem;
+      }
+
+      .label-required::after {
+        content: " (Required)";
+        color: var(--accent);
+        font-size: 0.85rem;
+      }
+
+      .avatar-label {
+        text-align: center;
+        width: 100%;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background: #fafafa;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        outline: none;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      select {
+        appearance: none;
+        background: #fafafa
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23555" d="M7 10l5 5 5-5z"/></svg>')
+          no-repeat right 0.75rem center;
+        background-size: 12px;
+      }
+
+      .avatar-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .avatar-container {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .avatar-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary);
+        box-shadow: var(--shadow-sm);
+        background: #e0e0e0;
+        transition: opacity 0.3s ease;
+      }
+
+      .avatar-preview.loading {
+        background: #e0e0e0
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" stroke="%23ccc" stroke-width="5" fill="none" stroke-dasharray="31.415, 31.415"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 25 25;360 25 25"/></circle></svg>')
+          center/40px no-repeat;
+      }
+
+      .avatar-container:hover .avatar-preview {
+        opacity: 0.8;
+      }
+
+      .avatar-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--primary);
+        color: var(--text-light);
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .avatar-container:hover .avatar-icon {
+        opacity: 1;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      .save-button {
+        background: var(--primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-md);
+        color: var(--text-light);
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .save-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .save-button:focus {
+        outline: 2px solid rgba(39, 174, 96, 0.4);
+        outline-offset: 2px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 100px;
+        right: 1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-sm);
+        color: var(--text-light);
+        background: var(--primary);
+        box-shadow: var(--shadow-md);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transform: translateX(150%);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 400px;
+        border-left: 4px solid var(--primary-dark);
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.error {
+        background: var(--accent);
+        border-left: 4px solid var(--accent-dark);
+      }
+
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 1.5rem;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        .avatar-section {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .save-button {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .notification {
+          max-width: calc(100% - 3rem);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Profile Settings</h1>
+      <div id="message" class="notification" style="display: none">
+        <i class="fas fa-info-circle"></i>
+        <span id="message-text"></span>
+      </div>
+      <form id="profile-form" enctype="multipart/form-data">
+        <div class="form-group full-width">
+          <label for="avatar" class="label-optional avatar-label"
+            >Profile Picture</label
+          >
+          <div class="avatar-section">
+            <div class="avatar-container">
+              <img
+                id="avatar-preview"
+                class="avatar-preview loading"
+                src="http://127.0.0.1:8000/media/avatars/default.png"
+                alt="Profile Picture"
+              />
+              <i class="fas fa-user avatar-icon"></i>
+            </div>
+            <input type="file" id="avatar" name="avatar" accept="image/*" />
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="full_name" class="label-required">Full Name</label>
+            <input type="text" id="full_name" name="full_name" required />
+          </div>
+          <div class="form-group">
+            <label for="email" class="label-required">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="phone" class="label-required">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required />
+          </div>
+          <div class="form-group">
+            <label for="date_of_birth" class="label-required"
+              >Date of Birth</label
+            >
+            <input
+              type="date"
+              id="date_of_birth"
+              name="date_of_birth"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="gender" class="label-optional">Gender</label>
+            <select id="gender" name="gender">
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="emergency_contact" class="label-optional"
+              >Emergency Contact</label
+            >
+            <input type="tel" id="emergency_contact" name="emergency_contact" />
+          </div>
+          <div class="form-group full-width">
+            <label for="medical_conditions" class="label-optional"
+              >Medical Conditions</label
+            >
+            <textarea
+              id="medical_conditions"
+              name="medical_conditions"
+            ></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label for="address" class="label-optional">Address</label>
+            <textarea id="address" name="address"></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label for="password" class="label-optional"
+              >New Password (leave blank to keep current)</label
+            >
+            <input type="password" id="password" name="password" />
+          </div>
+        </div>
+        <button type="submit" class="save-button">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+      </form>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+      // Fallback avatar loading
+      function loadFallbackAvatar() {
+        const avatarPreview = document.getElementById("avatar-preview");
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        console.log("Loading fallback avatar");
+        avatarPreview.src = defaultAvatar;
+        avatarPreview.onerror = () => {
+          console.error("Fallback avatar failed to load:", defaultAvatar);
+          avatarPreview.classList.remove("loading");
+        };
+        avatarPreview.onload = () => {
+          console.log("Fallback avatar loaded successfully");
+          avatarPreview.classList.remove("loading");
+        };
+      }
+
+      // Load profile data with retry
+      async function loadProfileData() {
+        console.log("Loading Profile Settings page");
+        const token = localStorage.getItem("token");
+        const avatarPreview = document.getElementById("avatar-preview");
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        if (!token) {
+          showMessage("No token found. Redirecting to login.", "error");
+          setTimeout(() => {
+            window.location.href = "MAIN.html";
+          }, 3000);
+          return null;
+        }
+
+        // Fallback to localStorage user data
+        let cachedData = null;
+        try {
+          const user = localStorage.getItem("user");
+          if (user) {
+            cachedData = JSON.parse(user);
+            console.log(
+              "Using cached user data:",
+              JSON.stringify(cachedData, null, 2)
+            );
+            populateForm(cachedData);
+          }
+        } catch (error) {
+          console.warn("Failed to parse cached user data:", error);
+        }
+
+        avatarPreview.classList.add("loading");
+        const maxRetries = 2;
+        let attempt = 0;
+
+        while (attempt <= maxRetries) {
+          try {
+            console.log(
+              `Fetching profile data from API (Attempt ${attempt + 1})`
+            );
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/profile/update/",
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log("API response status:", response.status);
+            if (!response.ok) {
+              if (response.status === 403 || response.status === 401) {
+                if (attempt < maxRetries) {
+                  console.log("Token expired, attempting to refresh");
+                  try {
+                    const newToken = await window.refreshToken();
+                    localStorage.setItem("token", newToken);
+                    attempt++;
+                    continue;
+                  } catch (refreshError) {
+                    console.error("Token refresh failed:", refreshError);
+                    showMessage(
+                      "Session expired. Please log in again.",
+                      "error"
+                    );
+                    setTimeout(() => {
+                      localStorage.removeItem("token");
+                      window.location.href = "MAIN.html";
+                    }, 3000);
+                    return null;
+                  }
+                } else {
+                  showMessage("Session expired. Please log in again.", "error");
+                  setTimeout(() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "MAIN.html";
+                  }, 3000);
+                  return null;
+                }
+              }
+              throw new Error(
+                `HTTP ${response.status}: Failed to fetch profile`
+              );
+            }
+            const data = await response.json();
+            console.log("Profile API response:", JSON.stringify(data, null, 2));
+
+            // Cache data in localStorage
+            localStorage.setItem("user", JSON.stringify(data));
+            populateForm(data);
+            return data;
+          } catch (error) {
+            console.error(
+              `Error loading profile (Attempt ${attempt + 1}):`,
+              error
+            );
+            if (attempt === maxRetries) {
+              showMessage(`Error loading profile: ${error.message}`, "error");
+              loadFallbackAvatar();
+              return cachedData;
+            }
+            attempt++;
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1s before retry
+          }
+        }
+      }
+
+      // Populate form fields
+      function populateForm(data) {
+        if (!data) {
+          console.warn("No data to populate form");
+          return;
+        }
+        console.log(
+          "Populating form with data:",
+          JSON.stringify(data, null, 2)
+        );
+        // Log each field explicitly
+        console.log("Setting full_name:", data.full_name || "");
+        console.log("Setting email:", data.email || "");
+        console.log("Setting phone:", data.profile?.phone || "");
+        console.log(
+          "Setting date_of_birth:",
+          data.profile?.date_of_birth || ""
+        );
+        console.log("Setting gender:", data.profile?.gender || "");
+        console.log(
+          "Setting emergency_contact:",
+          data.profile?.emergency_contact || ""
+        );
+        console.log(
+          "Setting medical_conditions:",
+          data.profile?.medical_conditions || ""
+        );
+        console.log("Setting address:", data.profile?.address || "");
+        console.log("Setting avatar:", data.profile?.avatar || "default");
+
+        document.getElementById("full_name").value = data.full_name || "";
+        document.getElementById("email").value = data.email || "";
+        document.getElementById("phone").value = data.profile?.phone || "";
+        document.getElementById("date_of_birth").value =
+          data.profile?.date_of_birth || "";
+        document.getElementById("gender").value = data.profile?.gender || "";
+        document.getElementById("emergency_contact").value =
+          data.profile?.emergency_contact || "";
+        document.getElementById("medical_conditions").value =
+          data.profile?.medical_conditions || "";
+        document.getElementById("address").value = data.profile?.address || "";
+
+        // Set avatar preview
+        const avatarPreview = document.getElementById("avatar-preview");
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        const avatarPath = data.profile?.avatar;
+        const avatarUrl =
+          avatarPath && avatarPath !== "" && avatarPath !== null
+            ? `http://127.0.0.1:8000${
+                avatarPath.startsWith("/") ? "" : "/"
+              }${avatarPath}?t=${new Date().getTime()}`
+            : defaultAvatar;
+        console.log("Setting avatar URL:", avatarUrl);
+        avatarPreview.src = avatarUrl;
+        avatarPreview.onerror = () => {
+          console.error(
+            "Avatar failed to load, falling back to default:",
+            avatarUrl
+          );
+          avatarPreview.src = defaultAvatar;
+          avatarPreview.classList.remove("loading");
+        };
+        avatarPreview.onload = () => {
+          console.log("Avatar loaded successfully:", avatarUrl);
+          avatarPreview.classList.remove("loading");
+        };
+
+        // Check for missing required fields
+        if (!data.profile?.phone || !data.profile?.date_of_birth) {
+          showMessage(
+            "Please complete your profile by filling in the required fields (Phone Number and Date of Birth).",
+            "error"
+          );
+        }
+      }
+
+      // Handle avatar image click
+      document
+        .getElementById("avatar-preview")
+        .addEventListener("click", () => {
+          console.log("Avatar image clicked");
+          document.getElementById("avatar").click();
+        });
+
+      // Preview avatar on file selection
+      document.getElementById("avatar").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          console.log("Avatar file selected:", file.name, file.size, file.type);
+          const reader = new FileReader();
+          reader.onload = () => {
+            const avatarPreview = document.getElementById("avatar-preview");
+            avatarPreview.src = reader.result;
+            avatarPreview.classList.remove("loading");
+            console.log(
+              "Local avatar preview loaded from file input:",
+              file.name
+            );
+          };
+          reader.readAsDataURL(file);
+        } else {
+          console.log("No avatar file selected");
+        }
+      });
+
+      // Handle form submission
+      document
+        .getElementById("profile-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          console.log("Submitting profile form");
+          const token = localStorage.getItem("token");
+          const defaultAvatar =
+            "http://127.0.0.1:8000/media/avatars/default.png";
+          const formData = new FormData();
+          const fullName = document.getElementById("full_name").value.trim();
+          const [firstName, ...lastName] = fullName.split(" ");
+          formData.append("first_name", firstName || "");
+          formData.append("last_name", lastName.join(" ") || "");
+          formData.append(
+            "email",
+            document.getElementById("email").value.trim()
+          );
+          const password = document.getElementById("password").value.trim();
+          if (password) formData.append("password", password);
+          formData.append(
+            "profile[phone]",
+            document.getElementById("phone").value.trim()
+          );
+          formData.append(
+            "profile[date_of_birth]",
+            document.getElementById("date_of_birth").value
+          );
+          formData.append(
+            "profile[gender]",
+            document.getElementById("gender").value || ""
+          );
+          formData.append(
+            "profile[emergency_contact]",
+            document.getElementById("emergency_contact").value.trim() || ""
+          );
+          formData.append(
+            "profile[medical_conditions]",
+            document.getElementById("medical_conditions").value.trim() || ""
+          );
+          formData.append(
+            "profile[address]",
+            document.getElementById("address").value.trim() || ""
+          );
+          const avatar = document.getElementById("avatar").files[0];
+          if (avatar) {
+            formData.append("profile[avatar]", avatar);
+            console.log(
+              "Uploading avatar:",
+              avatar.name,
+              avatar.size,
+              avatar.type
+            );
+          } else {
+            console.log("No avatar file selected for upload");
+          }
+
+          // Log FormData contents
+          console.log("FormData contents:");
+          for (let [key, value] of formData.entries()) {
+            console.log(
+              `${key}: ${value instanceof File ? value.name : value}`
+            );
+          }
+
+          try {
+            console.log("Sending PUT request to update profile");
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/profile/update/",
+              {
+                method: "PUT",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+              }
+            );
+            const data = await response.json();
+            console.log("PUT response:", JSON.stringify(data, null, 2));
+            if (!response.ok) {
+              if (response.status === 403 || response.status === 401) {
+                try {
+                  const newToken = await window.refreshToken();
+                  localStorage.setItem("token", newToken);
+                  const retryResponse = await fetch(
+                    "http://127.0.0.1:8000/api/profile/update/",
+                    {
+                      method: "PUT",
+                      headers: {
+                        Authorization: `Bearer ${newToken}`,
+                      },
+                      body: formData,
+                    }
+                  );
+                  const retryData = await retryResponse.json();
+                  if (!retryResponse.ok) {
+                    throw new Error(
+                      retryData.message ||
+                        JSON.stringify(retryData.errors) ||
+                        "Failed to update profile after token refresh"
+                    );
+                  }
+                  handleSuccessfulUpdate(retryData);
+                  return;
+                } catch (refreshError) {
+                  console.error("Token refresh failed:", refreshError);
+                  showMessage("Session expired. Please log in again.", "error");
+                  setTimeout(() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "MAIN.html";
+                  }, 3000);
+                  return;
+                }
+              }
+              throw new Error(
+                data.message ||
+                  JSON.stringify(data.errors) ||
+                  "Failed to update profile"
+              );
+            }
+
+            handleSuccessfulUpdate(data);
+          } catch (error) {
+            console.error("Error updating profile:", error);
+            showMessage(`Error: ${error.message}`, "error");
+            loadFallbackAvatar();
+          }
+        });
+
+      // Handle successful profile update
+      function handleSuccessfulUpdate(data) {
+        // Update localStorage
+        localStorage.setItem("user", JSON.stringify(data));
+
+        // Update avatar preview
+        const avatarPreview = document.getElementById("avatar-preview");
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        const avatarPath = data.profile?.avatar;
+        const avatarUrl =
+          avatarPath && avatarPath !== "" && avatarPath !== null
+            ? `http://127.0.0.1:8000${
+                avatarPath.startsWith("/") ? "" : "/"
+              }${avatarPath}?t=${new Date().getTime()}`
+            : defaultAvatar;
+        console.log("Post-update avatar URL:", avatarUrl);
+        avatarPreview.src = avatarUrl;
+        avatarPreview.onerror = () => {
+          console.error(
+            "Post-update avatar failed to load, falling back to default:",
+            avatarUrl
+          );
+          avatarPreview.src = defaultAvatar;
+          avatarPreview.classList.remove("loading");
+        };
+        avatarPreview.onload = () => {
+          console.log("Post-update avatar loaded successfully:", avatarUrl);
+          avatarPreview.classList.remove("loading");
+        };
+
+        // Update welcome message
+        const welcomeElement = document.querySelector("#welcome-message");
+        if (welcomeElement) {
+          welcomeElement.textContent = `Welcome ${
+            data.full_name || data.email
+          } to Your Scanova Dashboard`;
+        }
+
+        // Dispatch profileUpdated event
+        document.dispatchEvent(new Event("profileUpdated"));
+
+        showMessage("Profile updated successfully!", "success");
+      }
+
+      // Show message
+      function showMessage(message, type) {
+        const messageDiv = document.getElementById("message");
+        const messageText = document.getElementById("message-text");
+        messageText.textContent = message;
+        messageDiv.className = `notification ${type}`;
+        messageDiv.style.display = "flex";
+        setTimeout(() => {
+          messageDiv.className = `notification ${type} show`;
+        }, 10);
+        setTimeout(() => {
+          messageDiv.className = `notification ${type}`;
+          setTimeout(() => {
+            messageDiv.style.display = "none";
+          }, 400);
+        }, 3000);
+      }
+
+      // Initialize page
+      console.log("Initializing Profile Settings script");
+      loadFallbackAvatar();
+      loadProfileData();
+    </script>
+  </body>
+</html>

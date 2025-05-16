@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanova - Appointment Management</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/all.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/solid.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/regular.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/brands.css"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --primary-light: #6fcf97;
+        --secondary: #4db6ac;
+        --accent: #e74c3c;
+        --accent-dark: #c0392b;
+        --bg-light: #f5f7fa;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
+        --header-height: 100px;
+        --sidebar-width: 250px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", Arial, sans-serif;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-dark);
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      header {
+        background-color: var(--secondary);
+        color: var(--text-light);
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: var(--header-height);
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+      }
+
+      .logo {
+        display: flex;
+        align-self: center;
+        margin: 0.5rem 0;
+        margin-left: 1rem;
+      }
+
+      .logo img {
+        width: 160px;
+        max-height: 90px;
+        object-fit: contain;
+        transition: var(--transition);
+      }
+
+      .logo img:hover {
+        transform: scale(1.1);
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: var(--text-light);
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+      }
+
+      .hamburger:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .auth-button {
+        background-color: var(--accent);
+        padding: 0.7rem 1.3rem;
+        border-radius: 18px;
+        color: var(--text-light);
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        margin-right: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .auth-button:hover {
+        background-color: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        background: #edf6f0;
+        color: var(--text-dark);
+        padding: 2rem 1rem;
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: var(--transition);
+        z-index: 999;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-md);
+        border-top-right-radius: var(--radius-md);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar .profile-section {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .sidebar .profile-picture {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 0.5rem;
+        display: block;
+        border: 2px solid var(--primary);
+        transition: var(--transition);
+      }
+
+      .sidebar .profile-picture:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sidebar .full-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar .admin-tag {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        box-shadow: var(--shadow-sm);
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: var(--text-light);
+        animation: pulse 2s infinite;
+      }
+
+      .sidebar .nav-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar .nav-links li {
+        margin: 0.75rem 0;
+        display: block;
+      }
+
+      .sidebar .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        transition: var(--transition);
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .sidebar .nav-links a:hover,
+      .sidebar .nav-links a.active {
+        background-color: var(--primary);
+        color: var(--text-light);
+        transform: translateX(5px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sidebar .nav-links i {
+        font-size: 1.3rem;
+        transition: var(--transition);
+      }
+
+      .sidebar .nav-links a:hover i,
+      .sidebar .nav-links a.active i {
+        color: var(--text-light);
+        transform: scale(1.1);
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 0;
+        margin-top: var(--header-height);
+        padding: 2rem;
+        transition: var(--transition);
+        position: relative;
+        min-height: calc(100vh - var(--header-height));
+      }
+
+      .content-container {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        padding: 2rem;
+        min-height: calc(100vh - var(--header-height) - 4rem);
+        animation: fadeIn 0.5s ease-in;
+        position: relative;
+      }
+
+      .page-content {
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      .page-content .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      .appointments-section {
+        margin-top: 1.5rem;
+      }
+
+      .appointments-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .appointments-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .search-bar {
+        position: relative;
+        max-width: 300px;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 0.75rem 2.5rem 0.75rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        transition: var(--transition);
+      }
+
+      .search-bar input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.1);
+      }
+
+      .search-bar i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+        font-size: 1rem;
+      }
+
+      .filter-select {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        background: white;
+        transition: var(--transition);
+      }
+
+      .filter-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.1);
+      }
+
+      .appointments-table-container {
+        overflow-x: auto;
+        margin-top: 1.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+
+      .appointments-table th,
+      .appointments-table td {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .appointments-table th {
+        background-color: #f9fafb;
+        font-weight: 600;
+        color: var(--text-dark);
+        cursor: pointer;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .appointments-table th:hover {
+        background-color: #f1f3f5;
+      }
+
+      .appointments-table th.sortable::after {
+        content: "↕";
+        position: absolute;
+        right: 0.5rem;
+        font-size: 0.8rem;
+        opacity: 0.5;
+      }
+
+      .appointments-table th.sort-asc::after {
+        content: "↑";
+        opacity: 1;
+      }
+
+      .appointments-table th.sort-desc::after {
+        content: "↓";
+        opacity: 1;
+      }
+
+      .appointments-table td {
+        color: #666;
+      }
+
+      .appointments-table tr:hover {
+        background-color: #f9fafb;
+      }
+
+      .appointment-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .appointment-status.pending {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+      }
+
+      .appointment-status.cancelled {
+        background-color: #ccc;
+        color: var(--text-dark);
+      }
+
+      .appointment-status.paid {
+        background-color: #3498db;
+        color: white;
+      }
+
+      .appointment-status.date-and-time-available {
+        background-color: #f1c40f;
+        color: var(--text-dark);
+      }
+
+      .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .action-btn.cancel-btn {
+        background-color: var(--accent);
+        color: white;
+      }
+
+      .action-btn.validate-btn {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        border-radius: var(--radius-md);
+        backdrop-filter: blur(3px);
+      }
+
+      .loading-spinner {
+        border: 4px solid rgba(39, 174, 96, 0.2);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .main-content.loading .loading-overlay {
+        display: flex;
+      }
+
+      .notification {
+        position: fixed;
+        top: calc(var(--header-height) + 1rem);
+        right: 1rem;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-lg);
+        color: var(--text-light);
+        background-color: var(--primary);
+        box-shadow: var(--shadow-md);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transform: translateX(150%) scale(0.8);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+          scale 0.4s ease;
+        max-width: 350px;
+        border-left: 4px solid var(--primary-dark);
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      .notification.show {
+        transform: translateX(0) scale(1);
+      }
+
+      .notification.success {
+        background-color: var(--primary);
+        border-left: 4px solid var(--primary-dark);
+      }
+
+      .notification.error,
+      .notification.logout {
+        background-color: var(--accent);
+        border-left: 4px solid var(--accent-dark);
+      }
+
+      .error-message {
+        text-align: center;
+        padding: 2rem;
+        background: #fff3cd;
+        border-radius: var(--radius-md);
+        color: #856404;
+      }
+
+      .error-message i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(44, 62, 80, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        backdrop-filter: blur(3px);
+      }
+
+      .modal-overlay.show {
+        display: flex;
+        animation: fadeInOverlay 0.3s ease;
+      }
+
+      .modal {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 400px;
+        padding: 1.5rem;
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+      }
+
+      .modal-overlay.show .modal {
+        transform: scale(1);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .modal-header h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .modal-close:hover {
+        color: var(--accent);
+      }
+
+      .modal-body {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+
+      .modal-btn {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .modal-btn.confirm {
+        background-color: var(--primary);
+        color: var(--text-light);
+      }
+
+      .modal-btn.cancel {
+        background-color: #e0e0e0;
+        color: var(--text-dark);
+      }
+
+      .modal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      @keyframes fadeInOverlay {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (min-width: 769px) {
+        .sidebar {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: var(--sidebar-width);
+        }
+        .hamburger {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --sidebar-width: 240px;
+        }
+        .sidebar {
+          width: var(--sidebar-width);
+          padding: 1rem;
+        }
+        .content-container {
+          padding: 1.5rem;
+        }
+        .hamburger {
+          display: block;
+        }
+        .auth-button {
+          padding: 0.6rem 1rem;
+          font-size: 0.9rem;
+        }
+        .notification {
+          max-width: calc(100% - 2rem);
+        }
+        .page-content {
+          padding: 1.5rem;
+        }
+        .modal {
+          max-width: 90%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .content-container {
+          padding: 1rem;
+        }
+        .main-content {
+          padding: 1rem;
+        }
+        .auth-button {
+          margin-right: 0.5rem;
+        }
+        .page-content {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div
+        class="hamburger"
+        id="sidebarToggle"
+        aria-label="Toggle navigation menu"
+      >
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="logo">
+        <a
+          href="admin-dashboard.html"
+          id="logoLink"
+          aria-label="Scanova Admin Home"
+        >
+          <img src="LOGO1.png" alt="Scanova Logo" />
+        </a>
+      </div>
+      <button
+        id="logoutBtn"
+        class="auth-button"
+        aria-label="Logout from admin account"
+      >
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+      <div class="profile-section">
+        <img
+          id="profile-picture"
+          class="profile-picture"
+          src="http://127.0.0.1:8000/media/avatars/default.png"
+          alt="Admin Profile Picture"
+        />
+        <div class="full-name" id="full-name">Loading...</div>
+        <div class="admin-tag">Admin</div>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <a href="overview.html" aria-label="View admin overview">
+              <i class="fas fa-home"></i> Overview
+            </a>
+          </li>
+          <li>
+            <a
+              href="appointments.html"
+              aria-label="View appointments"
+              class="active"
+            >
+              <i class="fas fa-calendar-check"></i> Appointments
+            </a>
+          </li>
+          <li>
+            <a href="users.html" aria-label="Manage users">
+              <i class="fas fa-users"></i> User Management
+            </a>
+          </li>
+          <li>
+            <a href="scans.html" aria-label="Manage scans">
+              <i class="fas fa-x-ray"></i> Scan Management
+            </a>
+          </li>
+          <li>
+            <a href="tickets.html" aria-label="Manage tickets">
+              <i class="fas fa-ticket-alt"></i> Ticket Management
+            </a>
+          </li>
+          <li>
+            <a href="settings.html" aria-label="Admin settings">
+              <i class="fas fa-cog"></i> Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <main class="main-content" id="main-content">
+      <div class="content-container" id="content-container">
+        <div class="loading-overlay">
+          <div class="loading-spinner"></div>
+        </div>
+        <div class="page-content">
+          <div class="container">
+            <div
+              class="section appointments-section active"
+              id="appointments-section"
+            >
+              <h2
+                style="
+                  margin: 2rem 0;
+                  font-size: 1.8rem;
+                  color: var(--primary-dark);
+                "
+              >
+                Appointment Management
+              </h2>
+              <div class="appointments-header">
+                <h3>All Appointments</h3>
+                <div class="appointments-controls">
+                  <div class="search-bar">
+                    <input
+                      type="text"
+                      id="appointment-search"
+                      placeholder="Search by user or doctor"
+                    />
+                    <i class="fas fa-search"></i>
+                  </div>
+                  <select
+                    class="filter-select"
+                    id="status-filter"
+                    aria-label="Filter by status"
+                  >
+                    <option value="all">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="paid">Paid</option>
+                    <option value="date and time available">
+                      Date and Time Available
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div
+                class="appointments-table-container"
+                id="appointments-table-container"
+              >
+                <table class="appointments-table">
+                  <thead>
+                    <tr>
+                      <th class="sortable" data-sort="id">ID</th>
+                      <th class="sortable" data-sort="user">User</th>
+                      <th class="sortable" data-sort="doctor">Doctor</th>
+                      <th class="sortable" data-sort="appointment_date">
+                        Date
+                      </th>
+                      <th class="sortable" data-sort="status">Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="appointments-table-body">
+                    <tr>
+                      <td colspan="6">Loading appointments...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="notification" class="notification" role="alert">
+      <i id="notification-icon" class="fas fa-info-circle"></i>
+      <span id="notification-message"></span>
+    </div>
+
+    <div
+      id="confirmation-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-hidden="true"
+    >
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modal-title">Confirm Action</h3>
+          <button class="modal-close" aria-label="Close modal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="modal-message"></div>
+        <div class="modal-footer">
+          <button class="modal-btn cancel" id="modal-cancel">Cancel</button>
+          <button class="modal-btn confirm" id="modal-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="auth.js"></script>
+    <script>
+      // Global variables
+      const sidebar = document.getElementById("sidebar");
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      const logoLink = document.getElementById("logoLink");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const mainContent = document.getElementById("main-content");
+      const notification = document.getElementById("notification");
+      const notificationMessage = document.getElementById(
+        "notification-message"
+      );
+      const notificationIcon = document.getElementById("notification-icon");
+      const profilePicture = document.getElementById("profile-picture");
+      const fullName = document.getElementById("full-name");
+      const appointmentSearch = document.getElementById("appointment-search");
+      const statusFilter = document.getElementById("status-filter");
+      const appointmentsTableContainer = document.getElementById(
+        "appointments-table-container"
+      );
+      const appointmentsTableBody = document.getElementById(
+        "appointments-table-body"
+      );
+      const confirmationModal = document.getElementById("confirmation-modal");
+      const modalMessage = document.getElementById("modal-message");
+      const modalConfirm = document.getElementById("modal-confirm");
+      const modalCancel = document.getElementById("modal-cancel");
+      const modalClose = document.querySelector(".modal-close");
+      let allAppointments = [];
+      let appointmentSortColumn = "id";
+      let appointmentSortDirection = "asc";
+      let confirmCallback = null;
+
+      // Show notification function
+      function showNotification(message, options = {}) {
+        const {
+          isError = false,
+          isSuccess = false,
+          icon = "fa-info-circle",
+          duration = 3000,
+        } = options;
+        notificationMessage.textContent = message;
+        notificationIcon.className = `fas ${icon}`;
+        notification.classList.remove("success", "error", "logout");
+        if (isError) {
+          notification.classList.add("error");
+        } else if (isSuccess) {
+          notification.classList.add("success");
+        } else if (message === "Logging out...") {
+          notification.classList.add("logout");
+        }
+        notification.classList.add("show");
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, duration);
+      }
+
+      // Show confirmation modal
+      function showConfirmationModal(message, callback) {
+        modalMessage.textContent = message;
+        confirmationModal.classList.add("show");
+        confirmationModal.setAttribute("aria-hidden", "false");
+        confirmCallback = callback;
+        modalConfirm.focus();
+      }
+
+      // Close confirmation modal
+      function closeConfirmationModal() {
+        confirmationModal.classList.remove("show");
+        confirmationModal.setAttribute("aria-hidden", "true");
+        confirmCallback = null;
+      }
+
+      // Toggle sidebar function
+      function toggleSidebar() {
+        sidebar.classList.toggle("active");
+        const isVisible = sidebar.classList.contains("active");
+        sidebarToggle.setAttribute("aria-expanded", isVisible);
+      }
+
+      // Initialize user data
+      async function initUserData() {
+        console.log("Initializing admin data");
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+        if (!token) {
+          showNotification("No token found. Redirecting to login.", {
+            isError: true,
+          });
+          window.location.href = "admin-login.html";
+          return;
+        }
+        try {
+          if (user) {
+            const parsedUser = JSON.parse(user);
+            fullName.textContent =
+              parsedUser.full_name ||
+              parsedUser.username ||
+              parsedUser.email ||
+              "Admin";
+          }
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/profile/update/",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`Failed to fetch profile: ${response.status}`);
+          }
+          const data = await response.json();
+          if (!data.is_staff) {
+            showNotification("Access denied. Admins only.", { isError: true });
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "MAIN.html";
+            return;
+          }
+          const avatarUrl =
+            data.profile?.avatar && data.profile.avatar !== ""
+              ? `http://127.0.0.1:8000${
+                  data.profile.avatar.startsWith("/") ? "" : "/"
+                }${data.profile.avatar}?t=${new Date().getTime()}`
+              : "http://127.0.0.1:8000/media/avatars/default.png";
+          profilePicture.src = avatarUrl;
+          profilePicture.onerror = () => {
+            profilePicture.src =
+              "http://127.0.0.1:8000/media/avatars/default.png";
+          };
+          fullName.textContent = data.full_name || "Admin";
+          localStorage.setItem("user", JSON.stringify(data));
+
+          // Fetch appointments
+          await fetchAppointments();
+        } catch (error) {
+          console.error("Failed to fetch admin data:", error);
+          showNotification("Error loading admin data: " + error.message, {
+            isError: true,
+          });
+          window.location.href = "admin-login.html";
+        }
+      }
+
+      // Fetch appointments
+      async function fetchAppointments() {
+        const token = localStorage.getItem("token");
+        mainContent.classList.add("loading");
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/admin/appointments/",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`Failed to fetch appointments: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log("Fetched appointments:", data);
+          allAppointments = data.map((appointment) => ({
+            id: appointment.id,
+            user:
+              appointment.user.full_name || appointment.user.email || "Unknown",
+            doctor: appointment.doctor || "N/A",
+            appointment_date:
+              `${appointment.date}T${appointment.time}` || "N/A",
+            status: appointment.status || "Unknown",
+          }));
+          renderAppointments(allAppointments);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+          appointmentsTableBody.innerHTML = `
+            <tr>
+              <td colspan="6">
+                <div class="error-message">
+                  <i class="fas fa-exclamation-circle"></i><br>
+                  Failed to load appointments: ${error.message}
+                </div>
+              </td>
+            </tr>`;
+          showNotification("Error loading appointments: " + error.message, {
+            isError: true,
+          });
+        } finally {
+          mainContent.classList.remove("loading");
+        }
+      }
+
+      // Render appointments
+      function renderAppointments(appointments) {
+        console.log("Rendering appointments:", appointments);
+        if (!appointments || appointments.length === 0) {
+          appointmentsTableBody.innerHTML = `
+            <tr>
+              <td colspan="6">
+                <div class="error-message">
+                  <i class="fas fa-info-circle"></i><br>
+                  No appointments found.
+                </div>
+              </td>
+            </tr>`;
+          return;
+        }
+        appointmentsTableBody.innerHTML = "";
+        appointments.forEach((appointment) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${appointment.id}</td>
+            <td>${appointment.user}</td>
+            <td>${appointment.doctor}</td>
+            <td>${
+              new Date(appointment.appointment_date).toLocaleString() || "N/A"
+            }</td>
+            <td>
+              <span class="appointment-status ${appointment.status
+                .toLowerCase()
+                .replace(/\s+/g, "-")}">
+                ${appointment.status}
+              </span>
+            </td>
+            <td>
+              ${
+                appointment.status.toLowerCase() === "pending"
+                  ? `
+                <button class="action-btn validate-btn" data-id="${appointment.id}" aria-label="Validate appointment ${appointment.id}">
+                  <i class="fas fa-check"></i> Validate
+                </button>
+                <button class="action-btn cancel-btn" data-id="${appointment.id}" aria-label="Cancel appointment ${appointment.id}">
+                  <i class="fas fa-times"></i> Cancel
+                </button>`
+                  : appointment.status.toLowerCase() === "paid" ||
+                    appointment.status.toLowerCase() ===
+                      "date and time available"
+                  ? `
+                <button class="action-btn cancel-btn" data-id="${appointment.id}" aria-label="Cancel appointment ${appointment.id}">
+                  <i class="fas fa-times"></i> Cancel
+                </button>`
+                  : ""
+              }
+            </td>
+          `;
+          appointmentsTableBody.appendChild(row);
+        });
+
+        // Add event listeners for action buttons
+        document.querySelectorAll(".cancel-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            showConfirmationModal(
+              "Are you sure you want to cancel this appointment?",
+              () => cancelAppointment(btn.dataset.id)
+            );
+          });
+        });
+        document.querySelectorAll(".validate-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            showConfirmationModal(
+              "Are you sure you want to validate this appointment?",
+              () => validateAppointment(btn.dataset.id)
+            );
+          });
+        });
+      }
+
+      // Cancel appointment
+      async function cancelAppointment(appointmentId) {
+        const token = localStorage.getItem("token");
+        mainContent.classList.add("loading");
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8000/api/admin/appointments/${appointmentId}/`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ status: "Cancelled" }),
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`Failed to cancel appointment: ${response.status}`);
+          }
+          showNotification("Appointment cancelled successfully!", {
+            isSuccess: true,
+            icon: "fa-check-circle",
+          });
+          await fetchAppointments();
+        } catch (error) {
+          console.error("Error cancelling appointment:", error);
+          showNotification("Error cancelling appointment: " + error.message, {
+            isError: true,
+          });
+        } finally {
+          mainContent.classList.remove("loading");
+          closeConfirmationModal();
+        }
+      }
+
+      // Validate appointment
+      async function validateAppointment(appointmentId) {
+        const token = localStorage.getItem("token");
+        mainContent.classList.add("loading");
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8000/api/admin/appointments/${appointmentId}/`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ status: "Date and Time Available" }),
+            }
+          );
+          if (!response.ok) {
+            throw new Error(
+              `Failed to validate appointment: ${response.status}`
+            );
+          }
+          showNotification("Appointment validated successfully!", {
+            isSuccess: true,
+            icon: "fa-check-circle",
+          });
+          await fetchAppointments();
+        } catch (error) {
+          console.error("Error validating appointment:", error);
+          showNotification("Error validating appointment: " + error.message, {
+            isError: true,
+          });
+        } finally {
+          mainContent.classList.remove("loading");
+          closeConfirmationModal();
+        }
+      }
+
+      // Sort appointments
+      function sortAppointments(column, direction) {
+        const sorted = [...allAppointments].sort((a, b) => {
+          let valA = a[column] || "";
+          let valB = b[column] || "";
+          if (column === "appointment_date") {
+            valA = new Date(a.appointment_date);
+            valB = new Date(b.appointment_date);
+          }
+          if (typeof valA === "string") {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+          }
+          if (valA < valB) return direction === "asc" ? -1 : 1;
+          if (valA > valB) return direction === "asc" ? 1 : -1;
+          return 0;
+        });
+        renderAppointments(sorted);
+      }
+
+      // Filter appointments
+      function filterAppointments() {
+        const query = appointmentSearch.value.toLowerCase();
+        const status = statusFilter.value;
+        let filtered = [...allAppointments];
+        if (query) {
+          filtered = filtered.filter(
+            (appointment) =>
+              (appointment.user || "").toLowerCase().includes(query) ||
+              (appointment.doctor || "").toLowerCase().includes(query)
+          );
+        }
+        if (status !== "all") {
+          filtered = filtered.filter(
+            (appointment) => appointment.status.toLowerCase() === status
+          );
+        }
+        renderAppointments(filtered);
+      }
+
+      // Handle table sorting
+      appointmentsTableContainer.addEventListener("click", (e) => {
+        const th = e.target.closest("th.sortable");
+        if (!th) return;
+        const column = th.dataset.sort;
+        const currentDirection = th.classList.contains("sort-asc")
+          ? "asc"
+          : "desc";
+        const newDirection = currentDirection === "asc" ? "desc" : "asc";
+
+        // Update sort indicators
+        document
+          .querySelectorAll(".appointments-table th")
+          .forEach((header) => {
+            header.classList.remove("sort-asc", "sort-desc");
+          });
+        th.classList.add(`sort-${newDirection}`);
+
+        appointmentSortColumn = column;
+        appointmentSortDirection = newDirection;
+        sortAppointments(column, newDirection);
+      });
+
+      // Modal event listeners
+      modalConfirm.addEventListener("click", () => {
+        if (confirmCallback) confirmCallback();
+      });
+
+      modalCancel.addEventListener("click", closeConfirmationModal);
+      modalClose.addEventListener("click", closeConfirmationModal);
+
+      // Keyboard accessibility
+      confirmationModal.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeConfirmationModal();
+        if (e.key === "Enter" && document.activeElement !== modalCancel) {
+          if (confirmCallback) confirmCallback();
+        }
+      });
+
+      // Event listeners
+      sidebarToggle.addEventListener("click", toggleSidebar);
+
+      logoutBtn.addEventListener("click", () => {
+        showNotification("Logging out...", { duration: 1000 });
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setTimeout(() => {
+          window.location.href = "admin-login.html";
+        }, 1000);
+      });
+
+      appointmentSearch.addEventListener("input", filterAppointments);
+      statusFilter.addEventListener("change", filterAppointments);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initUserData();
+      });
+    </script>
+  </body>
+</html>

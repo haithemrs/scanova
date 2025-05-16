@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Center - Scanova</title>
+    <style>
+      .page-content {
+        color: #2c3e50;
+        line-height: 1.6;
+      }
+      .page-content .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .page-content h2 {
+        font-size: 1.75rem;
+        color: #219653;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+      .welcome-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .welcome-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.15) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        transform: rotate(30deg);
+        pointer-events: none;
+      }
+      .welcome-card h2 {
+        color: #219653;
+        margin-bottom: 1rem;
+        font-size: 2.2rem;
+        font-weight: 700;
+      }
+      .welcome-card p {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+      }
+      .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.8rem;
+        margin-top: 2.5rem;
+      }
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(39, 174, 96, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #6fcf97;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.4s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+      }
+      .stat-card:hover::after {
+        transform: scaleX(1);
+      }
+      .stat-icon {
+        font-size: 3rem;
+        color: #27ae60;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+      }
+      .stat-card:hover .stat-icon {
+        transform: scale(1.1) translateY(-5px);
+      }
+      .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+      }
+      .stat-label {
+        font-size: 1rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+      }
+      @keyframes floatIn {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .dashboard-stats .stat-card:nth-child(1) {
+        animation: floatIn 0.5s 0.1s backwards;
+      }
+      .dashboard-stats .stat-card:nth-child(2) {
+        animation: floatIn 0.5s 0.2s backwards;
+      }
+      .dashboard-stats .stat-card:nth-child(3) {
+        animation: floatIn 0.5s 0.3s backwards;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-content">
+      <div class="welcome-card">
+        <h2 id="welcome-message">Welcome to Your Scanova Dashboard</h2>
+        <p>Your healthcare information at your fingertips</p>
+      </div>
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-value">2</div>
+          <div class="stat-label">Upcoming Appointments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-file-medical"></i>
+          </div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">Recent Reports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-bell"></i>
+          </div>
+          <div class="stat-value">3</div>
+          <div class="stat-label">Notifications</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("contentLoaded", () => {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        const welcomeMessage = document.getElementById("welcome-message");
+        if (welcomeMessage) {
+          welcomeMessage.textContent = `Welcome ${
+            user.full_name || user.email || "User"
+          } to Your Scanova Dashboard`;
+        }
+      });
+    </script>
+  </body>
+</html>

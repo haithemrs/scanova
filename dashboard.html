@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanova - Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --primary-light: #6fcf97;
+        --secondary: #4db6ac;
+        --accent: #e74c3c;
+        --accent-dark: #c0392b;
+        --bg-light: #f5f7fa;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
+        --header-height: 100px;
+        --sidebar-width: 250px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", Arial, sans-serif;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-dark);
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      header {
+        background-color: var(--secondary);
+        color: var(--text-light);
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: var(--header-height);
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+      }
+
+      .logo {
+        display: flex;
+        align-self: center;
+        margin: 0.5rem 0;
+        margin-left: 1rem;
+      }
+
+      .logo img {
+        width: 160px;
+        max-height: 90px;
+        object-fit: contain;
+        transition: var(--transition);
+      }
+
+      .logo img:hover {
+        transform: scale(1.1);
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: var(--text-light);
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+      }
+
+      .hamburger:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .auth-button {
+        background-color: var(--accent);
+        padding: 0.7rem 1.3rem;
+        border-radius: 18px;
+        color: var(--text-light);
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        margin-right: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .auth-button:hover {
+        background-color: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .auth-button:focus {
+        outline: 2px solid rgba(231, 76, 60, 0.4);
+        outline-offset: 2px;
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        background: #edf6f0;
+        color: var(--text-dark);
+        padding: 2rem 1rem;
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: var(--transition);
+        z-index: 999;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-md);
+        border-top-right-radius: var(--radius-md);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar .profile-section {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .sidebar .profile-picture {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 0.5rem;
+        display: block;
+        border: 2px solid var(--primary);
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .sidebar .profile-picture.premium {
+        border: 3px solid var(--secondary);
+        box-shadow: 0 0 10px var(--primary-light);
+      }
+
+      .sidebar .profile-picture.premium::after {
+        content: "\f005";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        bottom: -5px;
+        right: -5px;
+        background: var(--primary);
+        color: var(--text-light);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border: 2px solid var(--text-light);
+      }
+
+      .sidebar .profile-picture:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sidebar .full-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar .premium-tag,
+      .sidebar .basic-tag {
+        display: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        box-shadow: var(--shadow-sm);
+        animation: pulse 2s infinite;
+      }
+
+      .sidebar .premium-tag {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: var(--text-light);
+      }
+
+      .sidebar .basic-tag {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: var(--text-light);
+      }
+
+      .sidebar .premium-tag.active,
+      .sidebar .basic-tag.active {
+        display: inline-block;
+      }
+
+      .sidebar .nav-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar .nav-links li {
+        margin: 0.75rem 0;
+        display: block;
+      }
+
+      .sidebar .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        transition: var(--transition);
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .sidebar .nav-links a:hover,
+      .sidebar .nav-links a.active {
+        background-color: var(--primary);
+        color: var(--text-light);
+        transform: translateX(5px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sidebar .nav-links i {
+        font-size: 1.3rem;
+        transition: var(--transition);
+      }
+
+      .sidebar .nav-links a:hover i,
+      .sidebar .nav-links a.active i {
+        color: var(--text-light);
+        transform: scale(1.1);
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 0;
+        margin-top: var(--header-height);
+        padding: 2rem;
+        transition: var(--transition);
+        position: relative;
+        min-height: calc(100vh - var(--header-height));
+      }
+
+      .content-container {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        padding: 1rem;
+        min-height: calc(100vh - var(--header-height) - 4rem);
+        animation: fadeIn 0.5s ease-in;
+        position: relative;
+      }
+
+      .page-content {
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        border-radius: var(--radius-md);
+        backdrop-filter: blur(3px);
+      }
+
+      .loading-spinner {
+        border: 4px solid rgba(39, 174, 96, 0.2);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .main-content.loading .loading-overlay {
+        display: flex;
+      }
+
+      .notification {
+        position: fixed;
+        top: calc(var(--header-height) + 1rem);
+        right: 1rem;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-lg);
+        color: var(--text-light);
+        background-color: var(--primary);
+        box-shadow: var(--shadow-md);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transform: translateX(150%);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 350px;
+        border-left: 4px solid var(--primary-dark);
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.error,
+      .notification.logout {
+        background-color: var(--accent);
+        border-left: 4px solid var(--accent-dark);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (min-width: 769px) {
+        .sidebar {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: var(--sidebar-width);
+        }
+        .hamburger {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --sidebar-width: 240px;
+        }
+        .sidebar {
+          width: var(--sidebar-width);
+          padding: 1rem;
+        }
+        .content-container {
+          padding: 0.8rem;
+        }
+        .page-content h2 {
+          font-size: 1.5rem;
+        }
+        .hamburger {
+          display: block;
+        }
+        .auth-button {
+          padding: 0.6rem 1rem;
+          font-size: 0.9rem;
+        }
+        .notification {
+          max-width: calc(100% - 2rem);
+        }
+        .sidebar .profile-picture {
+          width: 50px;
+          height: 50px;
+        }
+        .sidebar .full-name {
+          font-size: 1rem;
+        }
+        .sidebar .premium-tag,
+        .sidebar .basic-tag {
+          font-size: 0.75rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .content-container {
+          padding: 0.5rem;
+        }
+        .main-content {
+          padding: 1rem;
+        }
+        .auth-button {
+          margin-right: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div
+        class="hamburger"
+        id="sidebarToggle"
+        aria-label="Toggle navigation menu"
+      >
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="logo">
+        <a href="#" id="logoLink" aria-label="Scanova Home">
+          <img src="LOGO1.png" alt="Scanova Logo" />
+        </a>
+      </div>
+      <button
+        id="logoutBtn"
+        class="auth-button"
+        aria-label="Logout from account"
+      >
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+      <div class="profile-section">
+        <img
+          id="profile-picture"
+          class="profile-picture"
+          src="http://127.0.0.1:8000/media/avatars/default.png"
+          alt="Profile Picture"
+        />
+        <div class="full-name" id="full-name">Loading...</div>
+        <div class="premium-tag" id="premium-tag">Premium</div>
+        <div class="basic-tag" id="basic-tag">Basic</div>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <a
+              href="#"
+              data-page="profile-center.html"
+              aria-label="View your profile center"
+            >
+              <i class="fas fa-home"></i> Profile Center
+            </a>
+          </li>
+          <li class="book-appointment">
+            <a
+              href="#"
+              data-page="check-appointment.html"
+              aria-label="Book an appointment"
+            >
+              <i class="fas fa-calendar-check"></i> Book Appointment
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              data-page="check-scan-results.html"
+              aria-label="View your scan results"
+            >
+              <i class="fas fa-x-ray"></i> Check Scan Results
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              data-page="profile-settings.html"
+              aria-label="Manage your profile settings"
+            >
+              <i class="fas fa-user-cog"></i> Profile Settings
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              data-page="help-support.html"
+              aria-label="Get help and support"
+            >
+              <i class="fas fa-question-circle"></i> Help & Support
+            </a>
+          </li>
+          <li id="premium-nav">
+            <a
+              href="#"
+              data-page="premium.html"
+              aria-label="View premium features"
+            >
+              <i class="fas fa-star"></i> Premium
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <main class="main-content" id="main-content">
+      <div class="content-container" id="content-container">
+        <div class="loading-overlay">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="notification" class="notification" role="alert">
+      <i class="fas fa-info-circle"></i>
+      <span id="notification-message"></span>
+    </div>
+
+    <script>
+      // Global variables
+      const sidebar = document.getElementById("sidebar");
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      const logoLink = document.getElementById("logoLink");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const mainContent = document.getElementById("main-content");
+      const contentContainer = document.getElementById("content-container");
+      const notification = document.getElementById("notification");
+      const notificationMessage = document.getElementById(
+        "notification-message"
+      );
+      const profilePicture = document.getElementById("profile-picture");
+      const fullName = document.getElementById("full-name");
+      const premiumTag = document.getElementById("premium-tag");
+      const basicTag = document.getElementById("basic-tag");
+
+      // Show notification function
+      function showNotification(message, isError = false) {
+        notificationMessage.textContent = message;
+        const isLogout = message === "Logging out...";
+        notification.classList.toggle("error", isError);
+        notification.classList.toggle("logout", isLogout);
+        notification.classList.add("show");
+        setTimeout(() => {
+          notification.classList.remove("show");
+          notification.classList.remove("logout");
+        }, 3000);
+      }
+
+      // Logout function
+      function logout() {
+        showNotification("Logging out...");
+        setTimeout(() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "MAIN.html";
+        }, 1000);
+      }
+
+      // Toggle sidebar function
+      function toggleSidebar() {
+        sidebar.classList.toggle("active");
+        const isVisible = sidebar.classList.contains("active");
+        sidebarToggle.setAttribute("aria-expanded", isVisible);
+      }
+
+      // Load page function
+      async function loadPage(page) {
+        console.log(`Loading page: ${page}`);
+        mainContent.classList.add("loading");
+        try {
+          const response = await fetch(page);
+          if (!response.ok) {
+            throw new Error(
+              `Failed to load ${page}: ${response.status} ${response.statusText}`
+            );
+          }
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+          const pageContent = doc.querySelector(".page-content") || doc.body;
+
+          // Remove previous styles
+          document
+            .querySelectorAll("style[data-page-style]")
+            .forEach((style) => style.remove());
+
+          // Add new styles
+          const pageStyles = doc.querySelectorAll("style");
+          pageStyles.forEach((style) => {
+            const newStyle = document.createElement("style");
+            newStyle.setAttribute("data-page-style", page);
+            newStyle.textContent = style.textContent;
+            document.head.appendChild(newStyle);
+          });
+
+          // Update content with animation
+          contentContainer.style.opacity = "0";
+          setTimeout(() => {
+            contentContainer.innerHTML = "";
+            contentContainer.appendChild(pageContent.cloneNode(true));
+            updateActiveNavLink(page);
+            executePageScripts(doc, page);
+            contentContainer.style.opacity = "1";
+            if (window.innerWidth <= 768) {
+              sidebar.classList.remove("active");
+            }
+            document.dispatchEvent(new Event("contentLoaded"));
+            // Initialize page-specific functionality
+            initializePageScripts(page);
+          }, 300);
+        } catch (error) {
+          console.error("Page load error:", error);
+          contentContainer.innerHTML = `
+            <div class="page-content">
+              <div class="error-message" style="text-align: center; padding: 2rem;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                <h2>Error Loading Page</h2>
+                <p>${error.message}</p>
+                <p>Please check if ${page} exists or contact support.</p>
+                <button class="auth-button" style="margin-top: 1rem;" onclick="loadPage('profile-center.html')">
+                  Return to Profile Center
+                </button>
+              </div>
+            </div>
+          `;
+          showNotification(`Error loading ${getPageTitle(page)}`, true);
+        } finally {
+          mainContent.classList.remove("loading");
+        }
+      }
+
+      // Helper function to extract page title
+      function getPageTitle(page) {
+        const pageName = page.split(".")[0];
+        return pageName
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
+
+      // Update active navigation link
+      function updateActiveNavLink(page) {
+        const links = document.querySelectorAll(".sidebar .nav-links a");
+        links.forEach((link) => {
+          link.classList.toggle("active", link.dataset.page === page);
+        });
+      }
+
+      // Execute scripts from loaded page
+      function executePageScripts(doc, page) {
+        console.log(`Executing scripts for page: ${page}`);
+        const scripts = doc.querySelectorAll("script");
+        scripts.forEach((script, index) => {
+          try {
+            const newScript = document.createElement("script");
+            if (script.src) {
+              newScript.src = script.src;
+              newScript.async = true;
+            } else {
+              // Wrap inline script to expose functions globally
+              newScript.textContent = `
+                (function() {
+                  try {
+                    ${script.textContent}
+                    // Expose specific functions to window
+                    if (typeof openTab === 'function') window.openTab = openTab;
+                    if (typeof goToPayment === 'function') window.goToPayment = goToPayment;
+                    if (typeof showMessage === 'function') window.showMessage = showMessage;
+                    if (typeof fetchAppointments === 'function') window.fetchAppointments = fetchAppointments;
+                    if (typeof renderAppointments === 'function') window.renderAppointments = renderAppointments;
+                    if (typeof bookAppointment === 'function') window.bookAppointment = bookAppointment;
+                    if (typeof fetchAvailableSlots === 'function') window.fetchAvailableSlots = fetchAvailableSlots;
+                    if (typeof processPayment === 'function') window.processPayment = processPayment;
+                    if (typeof setupTableEventListeners === 'function') window.setupTableEventListeners = setupTableEventListeners;
+                  } catch (e) {
+                    console.error("Error in inline script for ${page}:", e);
+                  }
+                })();
+              `;
+              newScript.dataset.scriptId = `page-script-${index}`;
+            }
+            // Avoid duplicate scripts
+            if (
+              !document.querySelector(
+                `[data-script-id="page-script-${index}"]`
+              ) &&
+              !document.querySelector(`script[src="${script.src}"]`)
+            ) {
+              document.body.appendChild(newScript);
+              console.log(`Appended script: ${script.src || "inline"}`);
+              if (!script.src) {
+                setTimeout(() => newScript.remove(), 0);
+              }
+            }
+          } catch (error) {
+            console.error(
+              `Error executing script for ${page}: ${script.src || "inline"}`,
+              error
+            );
+          }
+        });
+      }
+
+      // Initialize page-specific scripts
+      function initializePageScripts(page) {
+        if (page === "check-appointment.html") {
+          // Ensure tab functionality is initialized
+          const tabLinks = document.querySelectorAll(".tablinks");
+          tabLinks.forEach((link) => {
+            link.addEventListener("click", (e) => {
+              const tabName = link.getAttribute("data-tab");
+              window.openTab(e, tabName);
+            });
+          });
+          // Trigger default tab
+          const bookTab = document.querySelector('.tablinks[data-tab="book"]');
+          if (bookTab) {
+            bookTab.click();
+          }
+          // Setup event listeners for payment buttons
+          const tableBody = document.getElementById("appointments-table-body");
+          if (tableBody) {
+            tableBody.addEventListener("click", (e) => {
+              const payButton = e.target.closest(".action-btn-pay");
+              if (payButton && window.goToPayment) {
+                const appointmentId = payButton.dataset.appointmentId;
+                window.goToPayment(appointmentId);
+              }
+            });
+          }
+          // Setup table sorting
+          const tableContainer = document.querySelector(
+            ".appointments-table-container"
+          );
+          if (tableContainer) {
+            tableContainer.addEventListener("click", (e) => {
+              const th = e.target.closest("th.sortable");
+              if (!th || !window.renderAppointments) return;
+              const column = th.dataset.sort;
+              let sortColumn = window.sortColumn || "id";
+              let sortDirection = window.sortDirection || "asc";
+              if (sortColumn === column) {
+                sortDirection = sortDirection === "asc" ? "desc" : "asc";
+              } else {
+                sortColumn = column;
+                sortDirection = "asc";
+              }
+              window.sortColumn = sortColumn;
+              window.sortDirection = sortDirection;
+              document
+                .querySelectorAll(".appointments-table th")
+                .forEach((header) => {
+                  header.classList.remove("sort-asc", "sort-desc");
+                });
+              th.classList.add(`sort-${sortDirection}`);
+              window.renderAppointments();
+            });
+          }
+          // Ensure fetchAppointments and fetchAvailableSlots are called
+          if (window.fetchAvailableSlots) {
+            window.fetchAvailableSlots();
+          }
+          if (window.fetchAppointments) {
+            window.fetchAppointments();
+          }
+          // Ensure table event listeners are set up
+          if (window.setupTableEventListeners) {
+            window.setupTableEventListeners();
+          }
+        }
+      }
+
+      // Initialize user data and profile picture
+      async function initUserData() {
+        console.log("Initializing user data");
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+        if (!token) {
+          showNotification("No token found. Redirecting to login.", true);
+          window.location.href = "MAIN.html";
+          return;
+        }
+        try {
+          if (user) {
+            const parsedUser = JSON.parse(user);
+            currentUser =
+              parsedUser.full_name ||
+              parsedUser.username ||
+              parsedUser.email ||
+              "User";
+            fullName.textContent = currentUser;
+          }
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/profile/update/",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (!response.ok)
+            throw new Error(`Failed to fetch profile: ${response.status}`);
+          const data = await response.json();
+          console.log("Profile API response:", JSON.stringify(data, null, 2));
+          const avatarUrl =
+            data.profile?.avatar && data.profile.avatar !== ""
+              ? `http://127.0.0.1:8000${
+                  data.profile.avatar.startsWith("/") ? "" : "/"
+                }${data.profile.avatar}?t=${new Date().getTime()}`
+              : "http://127.0.0.1:8000/media/avatars/default.png";
+          console.log("Setting profile picture to:", avatarUrl);
+          profilePicture.src = avatarUrl;
+          profilePicture.onerror = () => {
+            console.error("Profile picture failed to load:", avatarUrl);
+            profilePicture.src =
+              "http://127.0.0.1:8000/media/avatars/default.png";
+          };
+          profilePicture.onload = () => {
+            console.log("Profile picture loaded successfully:", avatarUrl);
+          };
+          fullName.textContent = data.full_name || "User";
+          const isPremium = data.profile?.premium_status || false;
+          console.log("Premium status:", isPremium);
+          profilePicture.classList.toggle("premium", isPremium);
+          premiumTag.classList.toggle("active", isPremium);
+          basicTag.classList.toggle("active", !isPremium);
+          document.getElementById("premium-nav").style.display = isPremium
+            ? "none"
+            : "block";
+          localStorage.setItem("user", JSON.stringify(data));
+        } catch (error) {
+          console.error("Failed to parse user data or fetch profile:", error);
+          showNotification("Error loading user data: " + error.message, true);
+          profilePicture.src =
+            "http://127.0.0.1:8000/media/avatars/default.png";
+          fullName.textContent = "User";
+          basicTag.classList.add("active");
+        }
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        sidebarToggle.addEventListener("click", toggleSidebar);
+        logoLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          loadPage("profile-center.html");
+        });
+        logoutBtn.addEventListener("click", logout);
+        const links = document.querySelectorAll(".sidebar .nav-links a");
+        links.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const page = e.currentTarget.dataset.page;
+            loadPage(page);
+          });
+        });
+        document.addEventListener("profileUpdated", async () => {
+          console.log("Handling profileUpdated event");
+          const token = localStorage.getItem("token");
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/profile/update/",
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (!response.ok)
+              throw new Error(`Failed to fetch profile: ${response.status}`);
+            const data = await response.json();
+            console.log(
+              "Profile updated API response:",
+              JSON.stringify(data, null, 2)
+            );
+            const avatarUrl =
+              data.profile?.avatar && data.profile.avatar !== ""
+                ? `http://127.0.0.1:8000${
+                    data.profile.avatar.startsWith("/") ? "" : "/"
+                  }${data.profile.avatar}?t=${new Date().getTime()}`
+                : "http://127.0.0.1:8000/media/avatars/default.png";
+            console.log("Updating profile picture to:", avatarUrl);
+            profilePicture.src = avatarUrl;
+            profilePicture.onerror = () => {
+              console.error(
+                "Updated profile picture failed to load:",
+                avatarUrl
+              );
+              profilePicture.src =
+                "http://127.0.0.1:8000/media/avatars/default.png";
+            };
+            profilePicture.onload = () => {
+              console.log(
+                "Updated profile picture loaded successfully:",
+                avatarUrl
+              );
+            };
+            fullName.textContent = data.full_name || "User";
+            const isPremium = data.profile?.premium_status || false;
+            console.log("Updated premium status:", isPremium);
+            profilePicture.classList.toggle("premium", isPremium);
+            premiumTag.classList.toggle("active", isPremium);
+            basicTag.classList.toggle("active", !isPremium);
+            document.getElementById("premium-nav").style.display = isPremium
+              ? "none"
+              : "block";
+            localStorage.setItem("user", JSON.stringify(data));
+          } catch (error) {
+            console.error("Failed to update profile picture:", error);
+            showNotification(
+              "Error updating profile picture: " + error.message,
+              true
+            );
+            profilePicture.src =
+              "http://127.0.0.1:8000/media/avatars/default.png";
+            basicTag.classList.add("active");
+          }
+        });
+      }
+
+      // Document ready
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("Dashboard loaded");
+        sidebar.classList.add("active");
+        initUserData();
+        setupEventListeners();
+        // Check for page query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get("page");
+        const pageMap = {
+          "profile-center": "profile-center.html",
+          "check-appointment": "check-appointment.html",
+          "check-scan-results": "check-scan-results.html",
+          "profile-settings": "profile-settings.html",
+          "help-support": "help-support.html",
+          premium: "premium.html",
+        };
+        const pageToLoad = pageMap[pageParam] || "profile-center.html";
+        console.log(`Initial page to load: ${pageToLoad}`);
+        loadPage(pageToLoad);
+      });
+
+      // Handle window resize
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 768) {
+          sidebar.classList.add("active");
+        } else {
+          sidebar.classList.remove("active");
+        }
+      });
+    </script>
+  </body>
+</html>

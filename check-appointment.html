@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment - Scanova</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --accent: #e74c3c;
+        --accent-dark: #c0392b;
+        --bg-light: #f5f7fa;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+      }
+
+      .page-content {
+        font-family: "Inter", Arial, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-dark);
+        line-height: 1.6;
+        padding: 1rem;
+      }
+
+      .page-content .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 2rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+      }
+
+      .page-content .tab {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .page-content .tab button {
+        padding: 0.5rem 1rem;
+        background: #eee;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .page-content .tab button:hover,
+      .page-content .tab button.active {
+        background: var(--primary);
+        color: var(--text-light);
+        transform: scale(1.05);
+      }
+
+      .page-content .tabcontent {
+        display: none;
+        padding: 1rem;
+        margin: 1rem auto;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      .page-content .tabcontent.active {
+        display: block;
+      }
+
+      .page-content .tabcontent h2 {
+        font-size: 1.8rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .page-content form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .page-content form label {
+        font-weight: 500;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+      }
+
+      .page-content form input,
+      .page-content form select,
+      .page-content form textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        background: #fafafa;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .page-content form input:focus,
+      .page-content form select:focus,
+      .page-content form textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        outline: none;
+      }
+
+      .page-content form textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .page-content form button {
+        padding: 0.75rem;
+        background: var(--primary);
+        color: var(--text-light);
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .page-content form button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .appointments-table-container {
+        overflow-x: auto;
+        margin-top: 1.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+
+      .appointments-table th,
+      .appointments-table td {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .appointments-table th {
+        background-color: #f9fafb;
+        font-weight: 600;
+        color: var(--text-dark);
+        cursor: pointer;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .appointments-table th:hover {
+        background-color: #f1f3f5;
+      }
+
+      .appointments-table th.sortable::after {
+        content: "↕";
+        position: absolute;
+        right: 0.5rem;
+        font-size: 0.8rem;
+        opacity: 0.5;
+      }
+
+      .appointments-table th.sort-asc::after {
+        content: "↑";
+        opacity: 1;
+      }
+
+      .appointments-table th.sort-desc::after {
+        content: "↓";
+        opacity: 1;
+      }
+
+      .appointments-table td {
+        color: #666;
+      }
+
+      .appointments-table tr:hover {
+        background-color: #f9fafb;
+      }
+
+      .appointment-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .appointment-status.pending {
+        background-color: #ffeaa7;
+        color: #d63031;
+      }
+
+      .appointment-status.confirmed {
+        background-color: #dff9fb;
+        color: var(--primary-dark);
+      }
+
+      .appointment-status.date-and-time-available {
+        background-color: #dff9fb;
+        color: var(--primary-dark);
+      }
+
+      .appointment-status.paid {
+        background-color: #e6ffed;
+        color: #27ae60;
+      }
+
+      .appointment-status.cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .action-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .payment-form {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-sm);
+        color: var(--text-light);
+        background: var(--primary);
+        box-shadow: var(--shadow-md);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+        transform: translateX(150%);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 400px;
+        border-left: 4px solid var(--primary-dark);
+      }
+
+      .notification.show {
+        transform: translateX(0);
+        display: flex;
+      }
+
+      .notification.error {
+        background: var(--accent);
+        border-left: 4px solid var(--accent-dark);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .page-content .tab {
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .page-content .container {
+          padding: 1.5rem;
+        }
+
+        .page-content .tabcontent h2 {
+          font-size: 1.5rem;
+        }
+
+        .notification {
+          max-width: calc(100% - 3rem);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-content .container {
+          padding: 1rem;
+        }
+
+        .page-content form button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <div class="tab">
+          <button class="tablinks active" data-tab="book">
+            Book Appointment
+          </button>
+          <button class="tablinks" data-tab="check">Check Appointment</button>
+          <button
+            class="tablinks"
+            data-tab="payment"
+            style="display: none"
+            id="payment-tab"
+          >
+            Payment
+          </button>
+        </div>
+
+        <div id="message" class="notification">
+          <i class="fas fa-info-circle"></i>
+          <span id="message-text"></span>
+        </div>
+
+        <div id="book" class="tabcontent active">
+          <h2>Book Appointment</h2>
+          <form id="appointment-form" onsubmit="bookAppointment(event)">
+            <div class="form-group">
+              <label for="date">Date:</label>
+              <input type="date" id="date" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="time">Time:</label>
+              <input type="time" id="time" name="time" required />
+            </div>
+            <div class="form-group">
+              <label for="reason">Reason:</label>
+              <textarea id="reason" name="reason" required></textarea>
+            </div>
+            <button type="submit">
+              <i class="fas fa-calendar-check"></i> Book Appointment
+            </button>
+          </form>
+        </div>
+
+        <div id="check" class="tabcontent">
+          <h2>Check Appointment</h2>
+          <div class="appointments-table-container">
+            <table class="appointments-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="id">ID</th>
+                  <th class="sortable" data-sort="date">Date</th>
+                  <th class="sortable" data-sort="time">Time</th>
+                  <th>Reason</th>
+                  <th class="sortable" data-sort="status">Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="appointments-table-body">
+                <tr>
+                  <td colspan="6">Loading appointments...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="payment" class="tabcontent">
+          <h2>Payment</h2>
+          <div class="payment-form">
+            <form id="payment-form" onsubmit="processPayment(event)">
+              <div class="form-group">
+                <label for="appointment-id">Appointment ID</label>
+                <input type="text" id="appointment-id" readonly />
+              </div>
+              <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input
+                  type="text"
+                  id="card-number"
+                  placeholder="1234 5678 9012 3456"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="card-holder">Card Holder Name</label>
+                <input
+                  type="text"
+                  id="card-holder"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="expiry-date">Expiry Date</label>
+                <input
+                  type="text"
+                  id="expiry-date"
+                  placeholder="MM/YY"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" placeholder="123" required />
+              </div>
+              <button type="submit">
+                <i class="fas fa-credit-card"></i> Pay Now
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let allAppointments = [];
+      let sortColumn = "id";
+      let sortDirection = "asc";
+      let selectedAppointmentId = null;
+
+      window.openTab = function (event, tabName) {
+        console.log(`Opening tab: ${tabName}`);
+        const tabcontent = document.getElementsByClassName("tabcontent");
+        for (let i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+          tabcontent[i].classList.remove("active");
+        }
+        const tablinks = document.getElementsByClassName("tablinks");
+        for (let i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+        }
+        const tabElement = document.getElementById(tabName);
+        if (tabElement) {
+          tabElement.style.display = "block";
+          tabElement.classList.add("active");
+          event.currentTarget.classList.add("active");
+          if (tabName === "check") {
+            fetchAppointments();
+          } else if (tabName === "book") {
+            setupDateInput();
+          } else if (tabName === "payment") {
+            document.getElementById("appointment-id").value =
+              selectedAppointmentId || "";
+          }
+        } else {
+          console.error(`Tab ${tabName} not found`);
+        }
+      };
+
+      function showMessage(message, type = "success") {
+        console.log(`Showing message: ${message} (${type})`);
+        const messageDiv = document.getElementById("message");
+        const messageText = document.getElementById("message-text");
+        messageText.textContent = message;
+        messageDiv.className = `notification ${type}`;
+        messageDiv.style.display = "flex";
+        setTimeout(() => {
+          messageDiv.className = `notification ${type} show`;
+        }, 10);
+        setTimeout(() => {
+          messageDiv.className = `notification ${type}`;
+          setTimeout(() => {
+            messageDiv.style.display = "none";
+          }, 400);
+        }, 3000);
+      }
+
+      function setupDateInput() {
+        const dateInput = document.getElementById("date");
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.setAttribute("min", today);
+      }
+
+      async function bookAppointment(event) {
+        event.preventDefault();
+        console.log("Submitting appointment form");
+        const form = event.target;
+        const dateInput = form.querySelector("#date").value;
+        const timeInput = form.querySelector("#time").value;
+        const today = new Date();
+        const selectedDate = new Date(dateInput);
+
+        if (selectedDate < today.setHours(0, 0, 0, 0)) {
+          showMessage("Cannot book appointments in the past.", "error");
+          return;
+        }
+
+        const data = {
+          date: dateInput,
+          time: timeInput,
+          reason: form.querySelector("#reason").value,
+          status: "Pending",
+        };
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          showMessage("Please log in to book an appointment.", "error");
+          setTimeout(() => {
+            window.location.href = "MAIN.html";
+          }, 3000);
+          return;
+        }
+
+        try {
+          console.log("Sending booking request:", JSON.stringify(data));
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/appointments/book/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(data),
+            }
+          );
+          const result = await response.json();
+          console.log("Booking response:", JSON.stringify(result, null, 2));
+          if (response.ok) {
+            showMessage(
+              result.message ||
+                "Appointment booked successfully! Awaiting admin approval.",
+              "success"
+            );
+            form.reset();
+            fetchAppointments();
+          } else {
+            showMessage(
+              `Error: ${result.detail || "Failed to book appointment."}`,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Booking error:", error);
+          showMessage(`Error booking appointment: ${error.message}`, "error");
+        }
+      }
+
+      async function fetchAppointments() {
+        const token = localStorage.getItem("token");
+        const tableBody = document.getElementById("appointments-table-body");
+
+        console.log(
+          "Fetching appointments with token:",
+          token ? token.substring(0, 10) + "..." : "missing"
+        );
+        if (!token) {
+          tableBody.innerHTML =
+            "<tr><td colspan='6'>Please log in to view appointments.</td></tr>";
+          showMessage("Please log in to view appointment history.", "error");
+          return;
+        }
+
+        try {
+          console.log(
+            "Sending GET request to /api/appointments/my-appointments/"
+          );
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/appointments/my-appointments/",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          console.log("Response status:", response.status);
+          if (response.ok) {
+            allAppointments = await response.json();
+            console.log(
+              "Appointments received:",
+              JSON.stringify(allAppointments, null, 2)
+            );
+            renderAppointments();
+          } else {
+            const error = await response.json();
+            console.error("Fetch error detail:", error);
+            tableBody.innerHTML = `<tr><td colspan="6">Error: ${
+              error.detail || "Unable to fetch appointments."
+            }</td></tr>`;
+            showMessage(
+              `Error: ${error.detail || "Unable to fetch appointments."}`,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Fetch appointments error:", error);
+          tableBody.innerHTML =
+            "<tr><td colspan='6'>Error fetching appointments. Please try again.</td></tr>";
+          showMessage("Error fetching appointments: " + error.message, "error");
+        }
+      }
+
+      function renderAppointments() {
+        const tableBody = document.getElementById("appointments-table-body");
+        const paymentTab = document.getElementById("payment-tab");
+
+        allAppointments.sort((a, b) => {
+          let valA, valB;
+          switch (sortColumn) {
+            case "id":
+              valA = a.id;
+              valB = b.id;
+              break;
+            case "date":
+              valA = new Date(a.date);
+              valB = new Date(b.date);
+              break;
+            case "time":
+              valA = a.time;
+              valB = b.time;
+              break;
+            case "status":
+              valA = a.status.toLowerCase();
+              valB = b.status.toLowerCase();
+              break;
+            default:
+              valA = a.id;
+              valB = b.id;
+          }
+          if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+          if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+          return 0;
+        });
+
+        tableBody.innerHTML =
+          allAppointments.length === 0
+            ? "<tr><td colspan='6'>No appointments found.</td></tr>"
+            : allAppointments
+                .map((appt) => {
+                  const displayStatus =
+                    appt.status === "Confirmed"
+                      ? "Date and Time Available"
+                      : appt.status;
+                  const statusClass =
+                    appt.status === "Confirmed" ||
+                    appt.status === "Date and Time Available"
+                      ? "date-and-time-available"
+                      : appt.status.toLowerCase();
+                  return `
+                      <tr>
+                        <td>${appt.id}</td>
+                        <td>${appt.date}</td>
+                        <td>${appt.time}</td>
+                        <td>${appt.reason}</td>
+                        <td>
+                          <span class="appointment-status ${statusClass}">
+                            ${displayStatus}
+                          </span>
+                        </td>
+                        <td>
+                          ${
+                            appt.status === "Confirmed" ||
+                            appt.status === "Date and Time Available"
+                              ? `<button class="action-btn action-btn-pay" data-appointment-id="${appt.id}">
+                                  <i class="fas fa-credit-card"></i> Pay
+                                </button>`
+                              : "-"
+                          }
+                        </td>
+                      </tr>
+                    `;
+                })
+                .join("");
+
+        paymentTab.style.display = selectedAppointmentId ? "block" : "none";
+      }
+
+      function goToPayment(appointmentId) {
+        console.log(
+          `Navigating to payment for appointment ID: ${appointmentId}`
+        );
+        selectedAppointmentId = appointmentId;
+        const paymentTab = document.getElementById("payment-tab");
+        paymentTab.style.display = "block";
+        paymentTab.classList.remove("active");
+        const paymentTabLink = document.querySelector(`[data-tab="payment"]`);
+        paymentTabLink.classList.add("active");
+        window.openTab({ currentTarget: paymentTabLink }, "payment");
+      }
+
+      async function processPayment(event) {
+        event.preventDefault();
+        const token = localStorage.getItem("token");
+        const data = {
+          appointment_id: selectedAppointmentId,
+          card_number: document.getElementById("card-number").value,
+          card_holder: document.getElementById("card-holder").value,
+          expiry_date: document.getElementById("expiry-date").value,
+          cvv: document.getElementById("cvv").value,
+        };
+
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/payments/process/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(data),
+            }
+          );
+          const result = await response.json();
+          if (response.ok) {
+            showMessage("Payment processed successfully!", "success");
+            document.getElementById("payment-form").reset();
+            selectedAppointmentId = null;
+            document.getElementById("payment-tab").style.display = "none";
+            window.openTab(
+              { currentTarget: document.querySelector(`[data-tab="check"]`) },
+              "check"
+            );
+          } else {
+            showMessage(
+              `Error: ${
+                result.detail || "Failed to process payment. Please try again."
+              }`,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Payment error:", error);
+          const errorMessage =
+            error.message.includes("404") || error.message.includes("Not Found")
+              ? "Payment processing is currently unavailable. Please contact support."
+              : `Error processing payment: ${error.message}`;
+          showMessage(errorMessage, "error");
+        }
+      }
+
+      function setupTableEventListeners() {
+        const tableBody = document.getElementById("appointments-table-body");
+        if (!tableBody) {
+          console.error("Table body not found for event listeners");
+          return;
+        }
+        tableBody.addEventListener("click", (e) => {
+          const payButton = e.target.closest(".action-btn-pay");
+          if (payButton) {
+            const appointmentId = payButton.dataset.appointmentId;
+            goToPayment(appointmentId);
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("check-appointment.html loaded");
+        setupDateInput();
+        setupTableEventListeners();
+      });
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'939ef66a1818bf91',t:'MTc0NjI2Njk2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

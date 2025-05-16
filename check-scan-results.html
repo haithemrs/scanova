@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Check Scan Results - Scanova</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --danger: #e74c3c;
+        --danger-dark: #c0392b;
+        --pneumonia: #8e44ad;
+        --pneumonia-dark: #6c3483;
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --bg-light: #f5f7fa;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.15);
+        --radius-md: 12px;
+        --transition: all 0.3s ease;
+      }
+
+      .page-content {
+        font-family: "Inter", Arial, sans-serif;
+        color: var(--text-dark);
+        padding: 1rem;
+        background: transparent;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        padding: 1.5rem;
+      }
+
+      h2 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .tab-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .scan-form-card {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        animation: slideIn 0.5s ease;
+      }
+
+      .scan-form-card label {
+        display: block;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      .scan-form-card select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: var(--transition);
+      }
+
+      .scan-form-card select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+        outline: none;
+      }
+
+      .scan-form-card button {
+        background-color: var(--primary);
+        color: var(--text-light);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: var(--transition);
+      }
+
+      .scan-form-card button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+      }
+
+      .premium-message {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      .premium-message a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .premium-message a:hover {
+        text-decoration: underline;
+      }
+
+      .scan-result-container {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: #ffffff;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        display: none;
+        animation: slideIn 0.5s ease;
+      }
+
+      .scan-result-container.active {
+        display: block;
+      }
+
+      .scan-result-container p {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+      }
+
+      .scan-result-container strong {
+        color: var(--text-dark);
+        font-weight: 600;
+      }
+
+      .result-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 0.8rem;
+      }
+
+      .scan-result-container button,
+      .scan-item button {
+        background: linear-gradient(145deg, var(--danger), var(--danger-dark));
+        color: var(--text-light);
+        padding: 0.6rem 1.1rem;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .scan-result-container button:hover,
+      .scan-item button:hover {
+        background: linear-gradient(145deg, var(--danger-dark), var(--danger));
+        transform: translateY(-3px);
+        box-shadow: 0 5px 12px rgba(231, 76, 60, 0.4);
+      }
+
+      .scan-result-container button:active,
+      .scan-item button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
+      }
+
+      .scan-result-container button::before,
+      .scan-item button::before {
+        content: "\f019";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+      }
+
+      .premium-upload {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        animation: slideIn 0.5s ease;
+      }
+
+      .premium-upload h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+      }
+
+      .upload-form {
+        display: none;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .upload-form.active {
+        display: flex;
+      }
+
+      .upload-form input[type="file"] {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #fff;
+      }
+
+      .upload-form textarea {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .upload-form select {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      .upload-form input:focus,
+      .upload-form textarea:focus,
+      .upload-form select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+        outline: none;
+      }
+
+      .upload-form button {
+        background-color: var(--primary);
+        color: var(--text-light);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .upload-form button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+      }
+
+      .scan-history {
+        animation: slideIn 0.5s ease;
+      }
+
+      .scan-history h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+      }
+
+      .scan-history-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .scan-item {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        position: relative;
+        animation: slideIn 0.5s ease;
+      }
+
+      .scan-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .scan-item p {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+      }
+
+      .scan-item strong {
+        color: var(--text-dark);
+        font-weight: 600;
+      }
+
+      .scan-item img {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+      }
+
+      .scan-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .scan-status::before {
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        margin-right: 6px;
+      }
+
+      .scan-status.normal {
+        background: linear-gradient(145deg, #2ecc71, #27ae60);
+        color: var(--text-light);
+      }
+
+      .scan-status.normal::before {
+        content: "\f058";
+      }
+
+      .scan-status.pneumonia {
+        background: linear-gradient(
+          145deg,
+          var(--pneumonia),
+          var(--pneumonia-dark)
+        );
+        color: var(--text-light);
+      }
+
+      .scan-status.pneumonia::before {
+        content: "\f071";
+      }
+
+      .scan-status.lung-opacity {
+        background: linear-gradient(145deg, #f39c12, #d35400);
+        color: var(--text-light);
+      }
+
+      .scan-status.lung-opacity::before {
+        content: "\f06a";
+      }
+
+      .scan-status.in-progress,
+      .scan-status.failed {
+        background: linear-gradient(145deg, #7f8c8d, #95a5a6);
+        color: var(--text-light);
+      }
+
+      .scan-status.in-progress::before {
+        content: "\f110";
+      }
+
+      .scan-status.failed::before {
+        content: "\f00d";
+      }
+
+      .scan-item-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem;
+        border-radius: 8px;
+        z-index: 1000;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        animation: slideInRight 0.5s ease;
+      }
+
+      .notification.success {
+        background: linear-gradient(145deg, #2ecc71, #27ae60);
+        color: var(--text-light);
+      }
+
+      .notification.error {
+        background: linear-gradient(145deg, #e74c3c, #c0392b);
+        color: var(--text-light);
+      }
+
+      .preview-container {
+        margin-top: 1rem;
+      }
+      .preview-container img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 8px;
+        object-fit: contain;
+      }
+      .preview-container p {
+        color: #555;
+        font-style: italic;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .result-actions,
+        .scan-item-actions {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .scan-status,
+        .scan-result-container button,
+        .scan-item button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-content">
+      <div class="container">
+        <h2>Check Scan Results</h2>
+        <div class="tab-content">
+          <div class="scan-form-card">
+            <h3>Check Scan Results</h3>
+            <form id="scan-form">
+              <label for="scan-select">Select Scan</label>
+              <select id="scan-select" name="scan" required>
+                <option value="" disabled selected>Select a scan</option>
+              </select>
+              <label for="model-type">Model Type</label>
+              <select id="model-type" name="model_type">
+                <option value="binary">Binary (Normal/Pneumonia)</option>
+                <option value="multi">Multi-class (Premium Only)</option>
+              </select>
+              <button type="submit">Analyze Scan</button>
+              <div class="premium-message">
+                If you want to upload your own images to scan and have access to
+                multi-class analysis upgrade to
+                <a href="#" id="premium-link">premium</a>.
+              </div>
+            </form>
+            <div class="preview-container" id="check-preview">
+              <p>Preview will appear here</p>
+            </div>
+            <div id="scan-result-container" class="scan-result-container">
+              <p><strong>Scan ID:</strong> <span id="result-scan-id"></span></p>
+              <p><strong>Result:</strong> <span id="result-value"></span></p>
+              <p>
+                <strong>Model Type:</strong>
+                <span id="result-model-type"></span>
+              </p>
+              <p>
+                <strong>Uploaded:</strong> <span id="result-uploaded"></span>
+              </p>
+              <div class="result-actions">
+                <span id="result-status" class="scan-status"></span>
+                <button
+                  id="download-result-btn"
+                  class="download-report-btn"
+                  data-scan-id=""
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="premium-upload">
+            <h3>Upload and Analyze Scan</h3>
+            <form id="upload-form" class="upload-form">
+              <input type="file" id="scan-file" accept="image/*" required />
+              <div class="preview-container" id="upload-preview">
+                <p>Preview will appear here</p>
+              </div>
+              <textarea
+                id="scan-description"
+                placeholder="Describe the scan (optional)"
+              ></textarea>
+              <select id="upload-model-type" name="model_type">
+                <option value="binary">Binary (Normal/Pneumonia)</option>
+                <option value="multi">Multi-class (Premium Only)</option>
+              </select>
+              <button type="submit">Upload and Analyze</button>
+            </form>
+            <div id="upload-result-container" class="scan-result-container">
+              <p>
+                <strong>Scan ID:</strong>
+                <span id="upload-result-scan-id"></span>
+              </p>
+              <p>
+                <strong>Result:</strong> <span id="upload-result-value"></span>
+              </p>
+              <p>
+                <strong>Model Type:</strong>
+                <span id="upload-result-model-type"></span>
+              </p>
+              <p>
+                <strong>Uploaded:</strong>
+                <span id="upload-result-uploaded"></span>
+              </p>
+              <div class="result-actions">
+                <span id="upload-result-status" class="scan-status"></span>
+                <button
+                  id="download-upload-btn"
+                  class="download-report-btn"
+                  data-scan-id=""
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="scan-history">
+            <h3>Scan History</h3>
+            <div id="scan-history-grid" class="scan-history-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+      window.downloadReport = async function (scanId) {
+        console.log(`Downloading report for scan ID: ${scanId}`);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showNotification("Please log in to download the report", true);
+          window.location.href = "MAIN.html?auth=login";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8000/api/scans/${scanId}/report/`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            let errorMessage = "Failed to download report";
+            try {
+              const errorData = await response.json();
+              errorMessage =
+                errorData.detail || errorData.message || errorMessage;
+            } catch (e) {
+              console.warn("Error parsing error response:", e);
+            }
+            throw new Error(errorMessage);
+          }
+
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `scan_report_${scanId}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+          showNotification("Report downloaded successfully!", false);
+        } catch (error) {
+          console.error("Download error:", error);
+          showNotification(`Error downloading report: ${error.message}`, true);
+        }
+      };
+
+      function showNotification(message, isError = false) {
+        console.log(`Showing notification: ${message}, isError: ${isError}`);
+        const notification = document.createElement("div");
+        notification.className = `notification ${
+          isError ? "error" : "success"
+        }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+      }
+
+      (function () {
+        console.log("Starting check-scan-results script");
+        const checkScan = {
+          elements: {
+            scanForm: document.getElementById("scan-form"),
+            scanSelect: document.getElementById("scan-select"),
+            modelType: document.getElementById("model-type"),
+            scanResultContainer: document.getElementById(
+              "scan-result-container"
+            ),
+            resultScanId: document.getElementById("result-scan-id"),
+            resultValue: document.getElementById("result-value"),
+            resultStatus: document.getElementById("result-status"),
+            resultModelType: document.getElementById("result-model-type"),
+            resultUploaded: document.getElementById("result-uploaded"),
+            premiumUpload: document.querySelector(".premium-upload"),
+            uploadForm: document.getElementById("upload-form"),
+            scanFile: document.getElementById("scan-file"),
+            scanDescription: document.getElementById("scan-description"),
+            uploadModelType: document.getElementById("upload-model-type"),
+            uploadResultContainer: document.getElementById(
+              "upload-result-container"
+            ),
+            uploadResultScanId: document.getElementById(
+              "upload-result-scan-id"
+            ),
+            uploadResultValue: document.getElementById("upload-result-value"),
+            uploadResultStatus: document.getElementById("upload-result-status"),
+            uploadResultModelType: document.getElementById(
+              "upload-result-model-type"
+            ),
+            uploadResultUploaded: document.getElementById(
+              "upload-result-uploaded"
+            ),
+            scanHistoryGrid: document.getElementById("scan-history-grid"),
+            premiumLink: document.getElementById("premium-link"),
+            checkPreview: document.getElementById("check-preview"),
+            uploadPreview: document.getElementById("upload-preview"),
+          },
+
+          showNotification(message, isError = false) {
+            window.showNotification(message, isError);
+          },
+
+          async loadUserData() {
+            console.log("Loading user data");
+            const token = localStorage.getItem("token");
+            if (!token) {
+              this.showNotification("Please log in to continue", true);
+              window.location.href = "MAIN.html?auth=login";
+              return;
+            }
+
+            try {
+              const response = await fetch(
+                "http://127.0.0.1:8000/api/profile/update/",
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+              console.log(`Profile fetch status: ${response.status}`);
+              if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                  await window.refreshToken();
+                  return this.loadUserData();
+                }
+                throw new Error("Failed to fetch profile");
+              }
+              const data = await response.json();
+              console.log("Profile data:", data);
+              const isPremium = data.profile.premium_status;
+              console.log(`Premium status: ${isPremium}`);
+              this.elements.modelType.disabled = !isPremium;
+              this.elements.premiumLink.style.display = isPremium
+                ? "none"
+                : "inline";
+              this.elements.premiumUpload.style.display = isPremium
+                ? "block"
+                : "none";
+              this.elements.uploadForm.classList.toggle("active", isPremium);
+            } catch (error) {
+              console.error("Profile fetch error:", error);
+              this.showNotification("Error loading user data", true);
+            }
+          },
+
+          async fetchAssignedScans() {
+            console.log("Starting fetchAssignedScans");
+            const token = localStorage.getItem("token");
+            console.log(
+              `Fetching assigned scans with token: ${
+                token ? "Token present" : "No token"
+              }`
+            );
+            if (!token) {
+              this.showNotification("Please log in to view scans", true);
+              window.location.href = "MAIN.html?auth=login";
+              return;
+            }
+
+            try {
+              console.log("Sending request to /api/scans/assigned/");
+              const response = await fetch(
+                "http://127.0.0.1:8000/api/scans/assigned/",
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+              console.log(
+                `Response status: ${response.status}, OK: ${response.ok}`
+              );
+              if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                  await window.refreshToken();
+                  return this.fetchAssignedScans();
+                }
+                throw new Error("Failed to fetch scans");
+              }
+              const scans = await response.json();
+              console.log("Fetched scans:", scans);
+              this.populateScanSelect(scans);
+              this.renderScanHistory(scans);
+            } catch (error) {
+              console.error("Fetch scans error:", error);
+              this.showNotification("Error fetching scans", true);
+            }
+          },
+
+          populateScanSelect(scans) {
+            this.elements.scanSelect.innerHTML =
+              '<option value="" disabled selected>Select a scan</option>';
+            scans.forEach((scan) => {
+              if (scan.sent_by_admin) {
+                const option = document.createElement("option");
+                option.value = scan.id;
+                const filename = scan.scan_file.split("/").pop();
+                option.textContent = filename;
+                this.elements.scanSelect.appendChild(option);
+              }
+            });
+          },
+
+          renderScanHistory(scans) {
+            console.log("Rendering scan history with scans:", scans);
+            this.elements.scanHistoryGrid.innerHTML = "";
+            if (scans.length === 0) {
+              console.log("No scans to render");
+              this.elements.scanHistoryGrid.innerHTML =
+                "<p>No scans available</p>";
+              return;
+            }
+            scans.forEach((scan) => {
+              console.log(
+                `Rendering scan ID: ${scan.id}, result: ${scan.result}`
+              );
+              const scanItem = document.createElement("div");
+              scanItem.className = "scan-item";
+              const statusClass = scan.result
+                ? scan.result.toLowerCase().replace(" ", "-")
+                : "failed";
+              const filename = scan.scan_file.split("/").pop();
+              scanItem.innerHTML = `
+                <img src="http://127.0.0.1:8000${
+                  scan.scan_file
+                }" alt="Scan Image" />
+                <p><strong>Scan ID:</strong> ${scan.id}</p>
+                <p><strong>Image Name:</strong> ${filename}</p>
+                <p><strong>Result:</strong> ${scan.result || "Not analyzed"}</p>
+                <p><strong>Model Type:</strong> ${
+                  scan.model_type === "binary" ? "Binary" : "Multi-class"
+                }</p>
+                <p><strong>Uploaded:</strong> ${new Date(
+                  scan.uploaded_at
+                ).toLocaleString()}</p>
+                <p><strong>Description:</strong> ${
+                  scan.description || "None"
+                }</p>
+                <div class="scan-item-actions">
+                  <span class="scan-status ${statusClass}">${
+                scan.result || "Failed"
+              }</span>
+                  <button class="download-report-btn" data-scan-id="${scan.id}">
+                    Download
+                  </button>
+                </div>
+              `;
+              this.elements.scanHistoryGrid.appendChild(scanItem);
+            });
+            console.log(`Rendered ${scans.length} scans`);
+          },
+
+          async analyzeScan(scanId, modelType) {
+            const token = localStorage.getItem("token");
+            if (!token) {
+              this.showNotification("Please log in to analyze scans", true);
+              window.location.href = "MAIN.html?auth=login";
+              return;
+            }
+
+            try {
+              const response = await fetch(
+                `http://127.0.0.1:8000/api/scans/analyze/${scanId}/`,
+                {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ model_type: modelType }),
+                }
+              );
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Analysis failed");
+              }
+              const data = await response.json();
+              this.displayScanResult(data.scan);
+              this.showNotification(
+                `Scan "${data.scan.scan_file
+                  .split("/")
+                  .pop()}" analyzed successfully!`,
+                false
+              );
+              await this.fetchAssignedScans();
+            } catch (error) {
+              console.error("Analyze scan error:", error);
+              this.showNotification(
+                `Error analyzing scan: ${error.message}`,
+                true
+              );
+            }
+          },
+
+          async uploadScan(file, description, modelType) {
+            const token = localStorage.getItem("token");
+            if (!token) {
+              this.showNotification("Please log in to upload scans", true);
+              window.location.href = "MAIN.html?auth=login";
+              return;
+            }
+
+            const formData = new FormData();
+            formData.append("scan_file", file);
+            formData.append("description", description);
+            formData.append("model_type", modelType);
+
+            try {
+              const response = await fetch(
+                "http://127.0.0.1:8000/api/scans/upload/",
+                {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: formData,
+                }
+              );
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Upload failed");
+              }
+              const data = await response.json();
+              this.displayUploadResult(data.scan);
+              this.showNotification(
+                `Scan "${data.scan.scan_file
+                  .split("/")
+                  .pop()}" uploaded and analyzed successfully!`,
+                false
+              );
+              await this.fetchAssignedScans();
+            } catch (error) {
+              console.error("Upload scan error:", error);
+              this.showNotification(
+                `Error uploading scan: ${error.message}`,
+                true
+              );
+            }
+          },
+
+          displayScanResult(scan) {
+            this.elements.scanResultContainer.classList.add("active");
+            this.elements.resultScanId.textContent = scan.id;
+            this.elements.resultValue.textContent =
+              scan.result || "Not analyzed";
+            this.elements.resultStatus.textContent = scan.result || "Failed";
+            this.elements.resultStatus.className = `scan-status ${
+              scan.result
+                ? scan.result.toLowerCase().replace(" ", "-")
+                : "failed"
+            }`;
+            this.elements.resultModelType.textContent =
+              scan.model_type === "binary" ? "Binary" : "Multi-class";
+            this.elements.resultUploaded.textContent = new Date(
+              scan.uploaded_at
+            ).toLocaleString();
+            document.getElementById("download-result-btn").dataset.scanId =
+              scan.id;
+            this.elements.checkPreview.innerHTML = `<img src="http://127.0.0.1:8000${scan.scan_file}" alt="Scan Preview">`;
+          },
+
+          displayUploadResult(scan) {
+            this.elements.uploadResultContainer.classList.add("active");
+            this.elements.uploadResultScanId.textContent = scan.id;
+            this.elements.uploadResultValue.textContent =
+              scan.result || "Not analyzed";
+            this.elements.uploadResultStatus.textContent =
+              scan.result || "Failed";
+            this.elements.uploadResultStatus.className = `scan-status ${
+              scan.result
+                ? scan.result.toLowerCase().replace(" ", "-")
+                : "failed"
+            }`;
+            this.elements.uploadResultModelType.textContent =
+              scan.model_type === "binary" ? "Binary" : "Multi-class";
+            this.elements.uploadResultUploaded.textContent = new Date(
+              scan.uploaded_at
+            ).toLocaleString();
+            document.getElementById("download-upload-btn").dataset.scanId =
+              scan.id;
+            this.elements.uploadPreview.innerHTML = `<img src="http://127.0.0.1:8000${scan.scan_file}" alt="Scan Preview">`;
+          },
+
+          init() {
+            console.log("Initializing checkScan");
+            console.log("loadUserData and fetchAssignedScans called");
+            this.loadUserData();
+            this.fetchAssignedScans();
+
+            this.elements.scanSelect.addEventListener("change", async () => {
+              const scanId = this.elements.scanSelect.value;
+              if (scanId) {
+                try {
+                  const response = await fetch(
+                    "http://127.0.0.1:8000/api/scans/assigned/",
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                          "token"
+                        )}`,
+                      },
+                    }
+                  );
+                  if (response.status === 401 || response.status === 403) {
+                    await window.refreshToken();
+                    return;
+                  }
+                  if (!response.ok) throw new Error("Failed to fetch scans");
+                  const scans = await response.json();
+                  const scan = scans.find((s) => s.id === parseInt(scanId));
+                  if (scan) {
+                    this.elements.checkPreview.innerHTML = `<img src="http://127.0.0.1:8000${scan.scan_file}" alt="Scan Preview">`;
+                  } else {
+                    this.elements.checkPreview.innerHTML =
+                      "<p>Preview will appear here</p>";
+                  }
+                } catch (error) {
+                  console.error("Preview error:", error);
+                  this.showNotification("Error loading scan preview", true);
+                }
+              } else {
+                this.elements.checkPreview.innerHTML =
+                  "<p>Preview will appear here</p>";
+              }
+            });
+
+            this.elements.scanForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const scanId = this.elements.scanSelect.value;
+              const modelType = this.elements.modelType.value;
+              if (scanId) {
+                this.analyzeScan(scanId, modelType);
+              }
+            });
+
+            this.elements.scanFile.addEventListener("change", (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  this.elements.uploadPreview.innerHTML = `<img src="${reader.result}" alt="Scan Preview">`;
+                };
+                reader.readAsDataURL(file);
+              } else {
+                this.elements.uploadPreview.innerHTML =
+                  "<p>Preview will appear here</p>";
+              }
+            });
+
+            this.elements.uploadForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const file = this.elements.scanFile.files[0];
+              const description = this.elements.scanDescription.value;
+              const modelType = this.elements.uploadModelType.value;
+              if (file) {
+                this.uploadScan(file, description, modelType);
+              }
+            });
+
+            document.addEventListener("click", (e) => {
+              const btn = e.target.closest(".download-report-btn");
+              if (btn && btn.dataset.scanId) {
+                window.downloadReport(btn.dataset.scanId);
+              }
+            });
+
+            this.elements.premiumLink.addEventListener("click", (e) => {
+              e.preventDefault();
+              window.location.href = "dashboard.html?page=premium";
+            });
+          },
+        };
+
+        if (
+          document.readyState === "complete" ||
+          document.readyState === "interactive"
+        ) {
+          console.log("Calling checkScan.init");
+          try {
+            checkScan.init();
+          } catch (error) {
+            console.error("Error in checkScan.init:", error);
+            showNotification(`Error initializing page: ${error.message}`, true);
+          }
+        } else {
+          document.addEventListener("DOMContentLoaded", () => {
+            console.log("Calling checkScan.init");
+            try {
+              checkScan.init();
+            } catch (error) {
+              console.error("Error in checkScan.init:", error);
+              showNotification(
+                `Error initializing page: ${error.message}`,
+                true
+              );
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

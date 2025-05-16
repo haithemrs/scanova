@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanova - AI-Powered Lung Scan Analysis</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --header-height: 100px;
+        --secondary: #4db6ac;
+        --primary: #27ae60;
+        --primary-dark: #219150;
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --transition: all 0.3s ease;
+        --text-dark: #2c3e50;
+        --text-light: #555;
+        --gray-light: #f5f7fa;
+        --white: #ffffff;
+        --border-radius: 10px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        color: var(--text-dark);
+        line-height: 1.6;
+        margin: 0; /* Ensure no margin on body */
+        padding: 0; /* Ensure no padding on body */
+        overflow-x: hidden; /* Prevent horizontal scrolling */
+      }
+
+      body.no-scroll {
+        overflow: hidden;
+      }
+
+      .main-content {
+        margin-top: var(--header-height);
+        transition: filter 0.3s ease, background 0.3s ease;
+      }
+
+      .main-content.main-blur {
+        filter: blur(3px) !important;
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      header {
+        background-color: var(--secondary);
+        color: white;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: var(--header-height);
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        align-self: center;
+        margin-left: 1rem;
+        margin: 0.5rem 0;
+      }
+
+      .logo img {
+        width: 130px;
+        max-height: 90px;
+        object-fit: contain;
+        transition: var(--transition);
+      }
+
+      .logo img:hover {
+        transform: scale(1.1);
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: white;
+      }
+
+      nav.nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+        margin-right: 1.5rem;
+      }
+
+      nav.nav-menu a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        padding: 0.6rem 1rem;
+        border-radius: 25px;
+        letter-spacing: 0.5px;
+        position: relative;
+      }
+
+      nav.nav-menu a:not(.auth-button)::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background: white;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: width 0.3s ease;
+      }
+
+      nav.nav-menu a:not(.auth-button):hover::after {
+        width: 70%;
+      }
+
+      nav.nav-menu a:not(.auth-button):hover {
+        color: rgba(255, 255, 255, 0.9);
+        transform: translateY(-3px);
+      }
+
+      .auth-button {
+        background-color: var(--primary);
+        padding: 0.8rem 1.6rem;
+        border-radius: 25px;
+        color: white;
+        font-size: 1.05rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.3s ease,
+          box-shadow 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .auth-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .hero {
+        padding: 8rem 1rem 6rem;
+        background: url("lung-scan.jpg") center/cover no-repeat;
+        color: white;
+        text-align: center;
+        min-height: 75vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        animation: fadeIn 1s ease-in;
+        position: relative;
+        margin: 0; /* Ensure no margin on hero section */
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          rgba(39, 174, 96, 0.85),
+          rgba(77, 182, 172, 0.85)
+        );
+        z-index: 1;
+      }
+
+      .hero h1,
+      .hero p,
+      .hero .cta-button,
+      .hero .admin-button {
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      }
+
+      .hero h1 {
+        font-size: 3.6rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero p {
+        font-size: 1.6rem;
+        margin-bottom: 3rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.7;
+        font-weight: 400;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        z-index: 2;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 16px 36px;
+        background-color: var(--primary);
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease,
+          box-shadow 0.3s ease;
+        width: auto;
+        text-align: center;
+        z-index: 10;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: transform 0.5s ease;
+        transform: skewX(-25deg);
+      }
+
+      .cta-button:hover::before {
+        transform: skewX(-25deg) translateX(200%);
+      }
+
+      .cta-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .cta-button i {
+        margin-right: 10px;
+      }
+
+      .admin-button {
+        display: inline-block;
+        padding: 16px 36px;
+        background-color: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: 2px solid white;
+        border-radius: 30px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease,
+          box-shadow 0.3s ease;
+        width: auto;
+        text-align: center;
+        z-index: 10;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .admin-button:hover {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .admin-button i {
+        margin-right: 10px;
+      }
+
+      .about-section {
+        padding: 5rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        margin-top: 3rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 1s ease-in;
+      }
+
+      .about-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+        position: relative;
+        display: inline-block;
+      }
+
+      .about-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .about-section p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto 2.5rem;
+        color: var(--text-light);
+        line-height: 1.8;
+      }
+
+      .about-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2.5rem;
+      }
+
+      .stat {
+        background: #f9f9f9;
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .stat:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .stat h3 {
+        font-size: 2.2rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .stat p {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        margin-bottom: 0;
+      }
+
+      .pricing-section {
+        padding: 5rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        margin-top: 3rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 1s ease-in;
+      }
+
+      .pricing-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+        position: relative;
+        display: inline-block;
+      }
+
+      .pricing-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .pricing-section p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto 2.5rem;
+        color: var(--text-light);
+      }
+
+      .pricing-plans {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+        margin-top: 2.5rem;
+      }
+
+      .plan {
+        background: var(--white);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .plan:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+      }
+
+      .plan .plan-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+      }
+
+      .plan .plan-price {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+      }
+
+      .plan .plan-price span {
+        font-size: 1.2rem;
+        color: var(--text-light);
+      }
+
+      .plan ul {
+        list-style: none;
+        margin-bottom: 2rem;
+        text-align: left;
+      }
+
+      .plan ul li {
+        margin-bottom: 0.8rem;
+        padding-left: 1.5rem;
+        position: relative;
+        color: var(--text-light);
+      }
+
+      .plan ul li::before {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: var(--primary);
+        position: absolute;
+        left: 0;
+      }
+
+      .plan .select-plan {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        background-color: var(--primary);
+        color: white;
+        font-weight: 600;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .plan .select-plan:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+      }
+
+      .free-tag {
+        position: absolute;
+        top: 12px;
+        left: -35px;
+        background: #ff8c00;
+        color: white;
+        padding: 0.3rem 3rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transform: rotate(-45deg);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .premium-plan {
+        border-color: var(--primary);
+        transform: scale(1.05);
+      }
+
+      .premium-plan:hover {
+        transform: scale(1.05) translateY(-10px);
+      }
+
+      .premium-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transform: rotate(45deg) translateX(1.5rem) translateY(-1rem);
+        width: 150px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .why-choose {
+        padding: 5rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        background-color: var(--gray-light);
+        animation: fadeIn 1s ease-in;
+        border-radius: var(--border-radius);
+        margin-top: 3rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .why-choose h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+        position: relative;
+        display: inline-block;
+      }
+
+      .why-choose h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+      }
+
+      .feature {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .feature:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature i {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+      }
+
+      .feature:hover i {
+        transform: scale(1.2);
+      }
+
+      .feature h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+      }
+
+      .feature p {
+        font-size: 1.05rem;
+        color: var(--text-light);
+        line-height: 1.6;
+      }
+
+      .faq-section {
+        padding: 5rem 2rem;
+        background-color: var(--white);
+        text-align: center;
+        animation: fadeIn 1s ease-in;
+        border-radius: var(--border-radius);
+        margin: 3rem auto;
+        max-width: 1200px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .faq-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+        position: relative;
+        display: inline-block;
+      }
+
+      .faq-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .faq-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        max-width: 1200px;
+        margin: 3rem auto 0;
+      }
+
+      .faq-item {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+        background: var(--white);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .faq-item:nth-child(even) {
+        flex-direction: row-reverse;
+        background-color: #f8fcf9;
+      }
+
+      .faq-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .faq-item .faq-content {
+        flex: 1;
+        text-align: left;
+      }
+
+      .faq-item h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+      }
+
+      .faq-item p {
+        font-size: 1.05rem;
+        color: var(--text-light);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .faq-item ul {
+        margin-bottom: 1rem;
+        padding-left: 1.8rem;
+      }
+
+      .faq-item ul li {
+        font-size: 1.05rem;
+        color: var(--text-light);
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+      }
+
+      .faq-icon {
+        font-size: 3rem;
+        color: var(--primary);
+        min-width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease, color 0.3s ease;
+        background: rgba(39, 174, 96, 0.1);
+        border-radius: 50%;
+      }
+
+      .faq-item:hover .faq-icon {
+        transform: scale(1.2);
+        color: var(--primary-dark);
+      }
+
+      .testimonials {
+        padding: 5rem 2rem;
+        background-color: #e8f5e9;
+        text-align: center;
+        max-width: 1200px;
+        margin: 3rem auto;
+        animation: fadeIn 1s ease-in;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .testimonials h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-dark);
+        position: relative;
+        display: inline-block;
+      }
+
+      .testimonials h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+      }
+
+      .testimonial {
+        background: white;
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .testimonial:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .testimonial::before {
+        content: "\f10d";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 2.5rem;
+        color: var(--primary);
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        opacity: 0.2;
+      }
+
+      .testimonial p {
+        font-style: italic;
+        font-size: 1.15rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-light);
+        line-height: 1.7;
+        padding-top: 1rem;
+      }
+
+      .testimonial h3 {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-dark);
+      }
+
+      footer {
+        background-color: var(--secondary);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+        width: 100%;
+      }
+
+      .footer-links {
+        margin-bottom: 1.5rem;
+      }
+
+      .footer-links a {
+        color: white;
+        text-decoration: none;
+        margin: 0 1.5rem;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+        position: relative;
+      }
+
+      .footer-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary);
+        transition: width 0.3s ease;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .footer-links a:hover::after {
+        width: 100%;
+      }
+
+      .contact-info {
+        margin: 1.5rem 0;
+      }
+
+      .contact-info p {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+      }
+
+      .contact-info a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .contact-info a:hover {
+        color: var(--primary);
+      }
+
+      .social-media {
+        margin: 1.5rem 0;
+      }
+
+      .social-media a {
+        margin: 0 0.8rem;
+        display: inline-block;
+        color: white;
+        font-size: 1.5rem;
+        transition: color 0.3s ease, transform 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+      }
+
+      .social-media a:hover {
+        color: var(--primary-dark);
+        transform: scale(1.2);
+        background: white;
+      }
+
+      footer p {
+        font-size: 0.9rem;
+        margin-top: 1.5rem;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        filter: none !important;
+        backdrop-filter: blur(5px);
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease-in;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal .container {
+        display: flex;
+        max-width: 900px;
+        width: 100%;
+        background: #edf6f0;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        margin: 2rem;
+        animation: fadeIn 1s ease-in;
+      }
+
+      .modal .logo-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 450px;
+        background: transparent;
+        padding: 2rem;
+      }
+
+      .modal .logo-section img.logo {
+        width: 300px;
+        max-height: 300px;
+        object-fit: contain;
+        transition: transform 0.5s ease;
+      }
+
+      .modal .logo-section img.logo:hover {
+        transform: scale(1.05);
+      }
+
+      .modal .form-section {
+        flex: 1;
+        padding: 3rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #edf6f0;
+      }
+
+      .modal .form-container {
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .modal .form-container h2 {
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+        color: var(--text-dark);
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .modal .form-container input {
+        width: 100%;
+        padding: 14px;
+        margin: 12px 0;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        font-size: 1rem;
+      }
+
+      .modal .form-container input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 8px rgba(39, 174, 96, 0.3);
+        outline: none;
+      }
+
+      .modal .form-container button {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease,
+          box-shadow 0.3s ease;
+        margin-top: 10px;
+        letter-spacing: 0.5px;
+      }
+
+      .modal .form-container button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+      }
+
+      .modal .form-container p {
+        margin-top: 1.5rem;
+        text-align: center;
+        color: var(--text-light);
+        font-size: 1rem;
+      }
+
+      .modal .form-container a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .modal .form-container a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+      }
+
+      .modal .form-container .error-message {
+        color: #e74c3c;
+        font-size: 0.95rem;
+        margin-top: -5px;
+        margin-bottom: 15px;
+        display: none;
+        text-align: center;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1100;
+        animation: slideIn 0.5s ease;
+      }
+
+      .toast.success {
+        background-color: var(--primary);
+      }
+
+      .toast.error {
+        background-color: #e74c3c;
+      }
+
+      .close-toast {
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .close-toast:hover {
+        transform: scale(1.2);
+      }
+
+      #signupForm {
+        display: none;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        .nav-menu {
+          position: fixed;
+          top: var(--header-height);
+          right: 0;
+          height: calc(100vh - var(--header-height));
+          width: 250px;
+          background-color: var(--secondary);
+          flex-direction: column;
+          padding: 2rem;
+          transform: translateX(100%);
+          transition: transform 0.3s ease-in-out;
+          z-index: 999;
+        }
+
+        .nav-menu.active {
+          transform: translateX(0);
+        }
+
+        .nav-menu a {
+          margin: 1rem 0;
+        }
+
+        .auth-button {
+          padding: 0.6rem 1.2rem;
+          font-size: 1rem;
+        }
+
+        .hero h1 {
+          font-size: 2.2rem;
+        }
+
+        .hero p {
+          font-size: 1.2rem;
+        }
+
+        .button-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .about-stats,
+        .pricing-plans,
+        .steps,
+        .features {
+          grid-template-columns: 1fr;
+        }
+
+        .premium-plan {
+          transform: scale(1);
+        }
+
+        .premium-plan:hover {
+          transform: translateY(-10px);
+        }
+
+        .faq-item {
+          flex-direction: column;
+        }
+
+        .faq-item:nth-child(even) {
+          flex-direction: column;
+        }
+
+        .faq-icon {
+          width: 100%;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+
+        .testimonial-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .modal .container {
+          flex-direction: column;
+          margin: 1rem;
+        }
+
+        .modal .logo-section {
+          min-height: 200px;
+        }
+
+        .modal .logo-section img.logo {
+          width: 200px;
+          max-height: 200px;
+        }
+
+        .modal .form-section {
+          padding: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: 1.8rem;
+        }
+
+        .hero p {
+          font-size: 1.1rem;
+        }
+
+        .cta-button, .admin-button {
+          padding: 12px 24px;
+          font-size: 1rem;
+        }
+
+        .step i,
+        .feature i {
+          font-size: 2rem;
+        }
+
+        .modal .form-container h2 {
+          font-size: 1.8rem;
+        }
+
+        .modal .form-container input,
+        .modal .form-container button {
+          padding: 12px;
+        }
+
+        .modal .logo-section img.logo {
+          width: 150px;
+          max-height: 150px;
+        }
+
+        .social-media a {
+          font-size: 1.2rem;
+          margin: 0 0.5rem;
+          width: 35px;
+          height: 35px;
+          line-height: 35px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="hamburger"><i class="fas fa-bars"></i></div>
+      <div class="logo">
+        <a href="MAIN.html"><img src="LOGO1.png" alt="Scanova Logo" /></a>
+      </div>
+      <nav class="nav-menu">
+        <a href="MAIN.html">Home</a>
+        <a href="#pricing-section">Pricing</a>
+        <a href="#" onclick="checkAuth('check-appointment.html')"
+          >Appointment</a
+        >
+        <a href="#" onclick="checkAuth('check-scan-results.html')">Scan</a>
+        <a href="#" onclick="openModal('login')" class="auth-button"
+          ><i class="fas fa-user"></i> Login/Signup</a
+        >
+      </nav>
+    </header>
+    <div class="main-content">
+      <section class="hero">
+        <h1>Early Detection Saves Lives</h1>
+        <p>
+          Our AI-powered platform provides quick and accurate lung scan
+          analysis. Early detection is key to managing lung diseases like COPD,
+          asthma, and pneumonia.
+        </p>
+        <div class="button-container">
+          <a
+            href="#"
+            class="cta-button"
+            onclick="openModal('login')"
+            aria-label="Get started with Scanova"
+          >
+            <i class="fas fa-x-ray"></i> Get Started
+          </a>
+          <a
+            href="#"
+            class="admin-button"
+            onclick="openAdminLogin()"
+            aria-label="Admin Login"
+          >
+            <i class="fas fa-lock"></i> Admin Login
+          </a>
+        </div>
+      </section>
+      <section class="about-section" id="about-section">
+        <h2>About Scanova</h2>
+        <p>
+          Scanova is dedicated to revolutionizing lung health through
+          cutting-edge AI technology. Our mission is to empower individuals with
+          fast, accurate, and secure lung scan analysis, enabling early
+          detection and better health outcomes.
+        </p>
+        <div class="about-stats">
+          <div class="stat">
+            <h3>95%+</h3>
+            <p>AI Accuracy Rate</p>
+          </div>
+          <div class="stat">
+            <h3>10,000+</h3>
+            <p>Trusted Users</p>
+          </div>
+          <div class="stat">
+            <h3>Minutes</h3>
+            <p>Results Delivery</p>
+          </div>
+        </div>
+      </section>
+      <section class="pricing-section" id="pricing-section">
+        <h2>Pricing Plans</h2>
+        <p>
+          Choose the plan that best fits your needs. All plans include our
+          AI-powered lung scan analysis technology.
+        </p>
+        <div class="pricing-plans">
+          <div class="plan">
+            <div class="free-tag">FREE</div>
+            <div class="plan-name">Basic</div>
+            <div class="plan-price">$0<span>/month</span></div>
+            <ul>
+              <li>3 scan analyses per day</li>
+              <li>Instant results delivery</li>
+              <li>Basic report</li>
+              <li>Binary detection for pneumonia & lung opacity</li>
+              <li>Can only analyse the provided lab images</li>
+              <li>Help & support</li>
+              <li>Secure data storage</li>
+            </ul>
+            <a href="#" class="select-plan" onclick="openModal('login')"
+              >Get Started</a
+            >
+          </div>
+          <div class="plan premium-plan">
+            <div class="premium-badge">Popular</div>
+            <div class="plan-name">Premium</div>
+            <div class="plan-price">$24.99<span>/month</span></div>
+            <ul>
+              <li>Unlimited scan analyses</li>
+              <li>Instant results delivery</li>
+              <li>Detailed reports with recommendations</li>
+              <li>Binary and multiclass detection</li>
+              <li>Upload your own scan</li>
+              <li>24/7 priority support</li>
+              <li>Advanced data security & extended storage</li>
+            </ul>
+            <a href="#" class="select-plan" onclick="openModal('login')"
+              >Select Plan</a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="why-choose">
+        <h2>Why Choose Scanova?</h2>
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Secure & Private</h3>
+            <p>
+              Advanced encryption protects your sensitive medical data and
+              personal information at all times.
+            </p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-bolt"></i>
+            <h3>Lightning Fast</h3>
+            <p>
+              Get detailed analysis results in minutes, not days or weeks like
+              traditional methods.
+            </p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-star"></i>
+            <h3>Trusted AI</h3>
+            <p>
+              Our technology achieves over 95% accuracy in detecting various
+              lung conditions and abnormalities.
+            </p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Access Anywhere</h3>
+            <p>
+              Use Scanova on any device, anytime, with our responsive web
+              platform and mobile app.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <i class="fas fa-lungs faq-icon"></i>
+            <div class="faq-content">
+              <h3>What lung diseases can Scanova detect?</h3>
+              <p>Scanova's AI detects conditions like:</p>
+              <ul>
+                <li>Chronic Obstructive Pulmonary Disease (COPD)</li>
+                <li>Asthma</li>
+                <li>Pneumonia</li>
+                <li>Lung Cancer</li>
+                <li>Tuberculosis</li>
+                <li>Pulmonary Fibrosis</li>
+              </ul>
+              <p>Early detection helps you take control of your health.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-content">
+              <h3>How accurate is Scanova's AI?</h3>
+              <p>
+                Our AI achieves over 95% accuracy in identifying key lung
+                conditions. This high accuracy is the result of training on
+                thousands of validated medical scans and continuous refinement
+                by leading pulmonologists. However, we always recommend
+                consulting with a healthcare professional for a final diagnosis.
+              </p>
+            </div>
+            <i class="fas fa-robot faq-icon"></i>
+          </div>
+          <div class="faq-item">
+            <i class="fas fa-shield-alt faq-icon"></i>
+            <div class="faq-content">
+              <h3>Is my data secure?</h3>
+              <p>
+                Absolutely. We employ industry-leading encryption standards to
+                protect your medical data and personal information. Our platform
+                is fully HIPAA-compliant, ensuring your information is treated
+                with the highest level of privacy and security protocols.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-content">
+              <h3>Do I need a doctor's referral?</h3>
+              <p>
+                No referral is needed to use Scanova. Simply upload your
+                existing lung scan and get results directly. However, if you
+                don't have a recent scan, we can help schedule one through our
+                network of imaging partners.
+              </p>
+            </div>
+            <i class="fas fa-user-md faq-icon"></i>
+          </div>
+          <div class="faq-item">
+            <i class="fas fa-clock faq-icon"></i>
+            <div class="faq-content">
+              <h3>How long for results?</h3>
+              <p>
+                Results are delivered instantly for all our users. Our advanced
+                AI processes your scan quickly, while maintaining the highest
+                standards of accuracy.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-content">
+              <h3>Can I book appointments?</h3>
+              <p>
+                Yes, Premium members can schedule consultations with lung health
+                specialists directly through our platform. We connect you with
+                qualified professionals who can discuss your scan results and
+                recommend next steps.
+              </p>
+            </div>
+            <i class="fas fa-calendar-check faq-icon"></i>
+          </div>
+        </div>
+      </section>
+      <section class="testimonials" id="testimonials">
+        <h2>What Our Users Say</h2>
+        <div class="testimonial-grid">
+          <div class="testimonial">
+            <p>
+              "Scanova's AI caught my early-stage lung issue when conventional
+              methods missed it. The detailed report gave me and my doctor
+              exactly what we needed to start treatment immediately."
+            </p>
+            <h3>- Sidali D., Pulmonologist</h3>
+          </div>
+          <div class="testimonial">
+            <p>
+              "The speed and accuracy of Scanova are remarkable. As a healthcare
+              provider, I've recommended it to numerous patients who need quick,
+              reliable lung analysis."
+            </p>
+            <h3>- Sarah M., Radiologist</h3>
+          </div>
+          <div class="testimonial">
+            <p>
+              "After years of misdiagnosis, Scanova helped identify my condition
+              correctly. The platform is intuitive and the specialist
+              consultation feature saved me weeks of waiting for appointments."
+            </p>
+            <h3>- James T., Patient</h3>
+          </div>
+          <div class="testimonial">
+            <p>
+              "As someone with a family history of lung disease, I use Scanova
+              for regular monitoring. The peace of mind knowing I can check my
+              lung health quickly is invaluable."
+            </p>
+            <h3>- Emily R., Subscriber</h3>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div class="footer-links">
+          <a href="help-support.html">Contact Us</a>
+          <a href="#about-section">About Us</a>
+        </div>
+        <div class="contact-info">
+          <p>Phone: <a href="tel:+1-800-722-6682">+213-"30789756</a></p>
+          <p>
+            Email:
+            <a href="mailto:support@scanova.com">support@scanova.com</a>
+          </p>
+        </div>
+        <div class="social-media">
+          <a href="#" aria-label="Facebook"
+            ><i class="fab fa-facebook-f"></i
+          ></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"
+            ><i class="fab fa-linkedin-in"></i
+          ></a>
+          <a href="#" aria-label="Instagram"
+            ><i class="fab fa-instagram"></i
+          ></a>
+        </div>
+        <p>© 2025 Scanova. All rights reserved.</p>
+      </footer>
+    </div>
+    <div class="modal" id="authModal">
+      <div class="container">
+        <div class="logo-section">
+          <img src="LOGO1.png" alt="Scanova Logo" class="logo" />
+        </div>
+        <div class="form-section">
+          <div class="form-container">
+            <h2 id="formTitle">Login to Scanova</h2>
+            <form id="loginForm">
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="Email"
+                required
+                aria-label="Email address"
+              />
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Password"
+                required
+                aria-label="Password"
+              />
+              <button type="submit">Login</button>
+              <p>Don't have an account? <a id="showSignup">Sign Up</a></p>
+              <div class="error-message" id="loginError"></div>
+            </form>
+            <form id="signupForm">
+              <input
+                type="text"
+                id="fullName"
+                placeholder="Full Name"
+                required
+                aria-label="Full name"
+              />
+              <input
+                type="email"
+                id="signupEmail"
+                placeholder="Email"
+                required
+                aria-label="Email address"
+              />
+              <input
+                type="password"
+                id="signupPassword"
+                placeholder="Password"
+                required
+                aria-label="Password"
+              />
+              <button type="submit">Sign Up</button>
+              <p>Already have an account? <a id="showLogin">Login</a></p>
+              <div class="error-message" id="signupError"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
+    <script>
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href === "#") return;
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+        });
+      });
+
+      // Hamburger menu toggle
+      document.querySelector(".hamburger").addEventListener("click", () => {
+        document.querySelector(".nav-menu").classList.toggle("active");
+      });
+
+      // Check auth for protected pages
+      function checkAuth(redirectUrl) {
+        const token = localStorage.getItem("token");
+        if (token) {
+          window.location.href = redirectUrl;
+        } else {
+          openModal("login");
+          showToast("Please login to access this feature", "error");
+        }
+      }
+
+      // Admin login function
+      function openAdminLogin() {
+        window.location.href = "admin-login.html";
+      }
+
+      // Modal functions
+      function openModal(formType) {
+        console.log(
+          "openModal called with formType:",
+          formType,
+          "Stack:",
+          new Error().stack
+        );
+        const modal = document.getElementById("authModal");
+        const mainContent = document.querySelector(".main-content");
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+        const formTitle = document.getElementById("formTitle");
+        const loginError = document.getElementById("loginError");
+        const signupError = document.getElementById("signupError");
+        const modalContent = document.querySelector(".modal .container");
+
+        modal.style.display = "flex";
+        modal.classList.add("active");
+        modal.style.opacity = "1";
+        modal.style.visibility = "visible";
+        mainContent.classList.add("main-blur");
+        document.body.classList.add("no-scroll");
+        loginError.style.display = "none";
+        signupError.style.display = "none";
+        loginForm.reset();
+        signupForm.reset();
+
+        const modalStyles = getComputedStyle(modal);
+        const modalContentStyles = getComputedStyle(modalContent);
+        const mainContentStyles = getComputedStyle(mainContent);
+        console.log("Opening modal, formType:", formType);
+        console.log("Modal styles:", {
+          display: modalStyles.display,
+          background: modalStyles.background,
+          filter: modalStyles.filter,
+          zIndex: modalStyles.zIndex,
+          height: modalStyles.height,
+          opacity: modalStyles.opacity,
+          visibility: modalStyles.visibility,
+        });
+        console.log("Modal container styles:", {
+          display: modalContentStyles.display,
+          background: modalContentStyles.backgroundColor,
+          opacity: modalContentStyles.opacity,
+          filter: modalContentStyles.filter,
+          top: modalContentStyles.top,
+          left: modalContentStyles.left,
+          zIndex: modalContentStyles.zIndex,
+          visibility: modalContentStyles.visibility,
+        });
+        console.log("Main-content filter:", mainContentStyles.filter);
+
+        if (formType === "login") {
+          loginForm.style.display = "block";
+          signupForm.style.display = "none";
+          formTitle.textContent = "Login to Scanova";
+        } else {
+          loginForm.style.display = "none";
+          signupForm.style.display = "block";
+          formTitle.textContent = "Sign Up for Scanova";
+        }
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("authModal");
+        const mainContent = document.querySelector(".main-content");
+        modal.style.display = "none";
+        modal.classList.remove("active");
+        mainContent.classList.remove("main-blur");
+        document.body.classList.remove("no-scroll");
+        console.log("Modal closed");
+      }
+
+      // Form toggle
+      document.getElementById("showSignup").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("signupForm").style.display = "block";
+        document.getElementById("formTitle").textContent =
+          "Sign Up for Scanova";
+        document.getElementById("loginError").style.display = "none";
+        document.getElementById("signupError").style.display = "none";
+      });
+
+      document.getElementById("showLogin").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById("signupForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("formTitle").textContent = "Login to Scanova";
+        document.getElementById("loginError").style.display = "none";
+        document.getElementById("signupError").style.display = "none";
+      });
+
+      // Login form submission
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const email = document.getElementById("loginEmail").value;
+          const password = document.getElementById("loginPassword").value;
+          const errorDiv = document.getElementById("loginError");
+
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/auth/login/",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+              }
+            );
+            const result = await response.json();
+            if (response.ok) {
+              localStorage.setItem("token", result.token);
+              localStorage.setItem("user", JSON.stringify(result.user));
+              showToast("Login Successful!", "success");
+              setTimeout(() => {
+                closeModal();
+                window.location.href = "dashboard.html";
+              }, 2000);
+            } else {
+              errorDiv.textContent = result.message || "Login failed";
+              errorDiv.style.display = "block";
+              showToast(result.message || "Login failed", "error");
+            }
+          } catch (error) {
+            errorDiv.textContent = "An error occurred. Please try again.";
+            errorDiv.style.display = "block";
+            showToast("An error occurred. Please try again.", "error");
+          }
+        });
+
+      // Signup form submission
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const full_name = document.getElementById("fullName").value;
+          const email = document.getElementById("signupEmail").value;
+          const password = document.getElementById("signupPassword").value;
+          const errorDiv = document.getElementById("signupError");
+
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/auth/register/",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ full_name, email, password }),
+              }
+            );
+            const result = await response.json();
+            if (response.ok) {
+              localStorage.setItem("token", result.token);
+              localStorage.setItem("user", JSON.stringify(result.user));
+              showToast("Sign Up Successful!", "success");
+              setTimeout(() => {
+                closeModal();
+                window.location.href = "dashboard.html";
+              }, 2000);
+            } else {
+              errorDiv.textContent = result.message || "Sign Up failed";
+              errorDiv.style.display = "block";
+              showToast(result.message || "Sign Up failed", "error");
+            }
+          } catch (error) {
+            errorDiv.textContent = "An error occurred. Please try again.";
+            errorDiv.style.display = "block";
+            showToast("An error occurred. Please try again.", "error");
+          }
+        });
+
+      // Toast notification
+      function showToast(message, type) {
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+          ${message}
+          <span class="close-toast">×</span>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+        toast
+          .querySelector(".close-toast")
+          .addEventListener("click", () => toast.remove());
+      }
+
+      // Close modal on outside click
+      document.getElementById("authModal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("authModal")) {
+          closeModal();
+        }
+      });
+
+      // Check for auth query parameter to open modal
+      document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("auth") === "login") {
+          openModal("login");
+        }
+      });
+    </script>
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
+  </body>
+</html>

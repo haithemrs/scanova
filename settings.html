@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanova - Admin Settings</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/all.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/solid.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/regular.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v6.4.0/css/brands.css"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --primary-light: #6fcf97;
+        --secondary: #4db6ac;
+        --accent: #e74c3c;
+        --accent-dark: #c0392b;
+        --bg-light: #f5f7fa;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
+        --header-height: 100px;
+        --sidebar-width: 250px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", Arial, sans-serif;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-dark);
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      header {
+        background-color: var(--secondary);
+        color: var(--text-light);
+        padding: 0 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: var(--header-height);
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(10px);
+      }
+
+      .logo {
+        display: flex;
+        align-self: center;
+        margin: 0.5rem 0;
+        margin-left: 1rem;
+      }
+
+      .logo img {
+        width: 160px;
+        max-height: 90px;
+        object-fit: contain;
+        transition: var(--transition);
+      }
+
+      .logo img:hover {
+        transform: scale(1.1);
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: var(--text-light);
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+      }
+
+      .hamburger:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .auth-button {
+        background-color: var(--accent);
+        padding: 0.7rem 1.3rem;
+        border-radius: 18px;
+        color: var(--text-light);
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        margin-right: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .auth-button:hover {
+        background-color: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        background: #edf6f0;
+        color: var(--text-dark);
+        padding: 2rem 1rem;
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        transition: var(--transition);
+        z-index: 999;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-md);
+        border-top-right-radius: var(--radius-md);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .sidebar .profile-section {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .sidebar .profile-picture {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 0.5rem;
+        display: block;
+        border: 2px solid var(--primary);
+        transition: var(--transition);
+      }
+
+      .sidebar .profile-picture:hover {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sidebar .full-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar .admin-tag {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        box-shadow: var(--shadow-sm);
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: var(--text-light);
+        animation: pulse 2s infinite;
+      }
+
+      .sidebar .nav-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar .nav-links li {
+        margin: 0.75rem 0;
+        display: block;
+      }
+
+      .sidebar .nav-links a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        transition: var(--transition);
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .sidebar .nav-links a:hover,
+      .sidebar .nav-links a.active {
+        background-color: var(--primary);
+        color: var(--text-light);
+        transform: translateX(5px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .sidebar .nav-links i {
+        font-size: 1.3rem;
+        transition: var(--transition);
+      }
+
+      .sidebar .nav-links a:hover i,
+      .sidebar .nav-links a.active i {
+        color: var(--text-light);
+        transform: scale(1.1);
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 0;
+        margin-top: var(--header-height);
+        padding: 2rem;
+        transition: var(--transition);
+        position: relative;
+        min-height: calc(100vh - var(--header-height));
+      }
+
+      .content-container {
+        background: white;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        padding: 2rem;
+        min-height: calc(100vh - var(--header-height) - 4rem);
+        animation: fadeIn 0.5s ease-in;
+        position: relative;
+      }
+
+      .page-content {
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      .page-content .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      .settings-section {
+        margin-top: 1.5rem;
+      }
+
+      .settings-section h1 {
+        color: var(--primary);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+      }
+
+      .label-optional::after {
+        content: " (Optional)";
+        color: #888;
+        font-size: 0.85rem;
+      }
+
+      .label-required::after {
+        content: " (Required)";
+        color: var(--accent);
+        font-size: 0.85rem;
+      }
+
+      .avatar-label {
+        text-align: center;
+        width: 100%;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background: #fafafa;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        outline: none;
+      }
+
+      select {
+        appearance: none;
+        background: #fafafa
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23555" d="M7 10l5 5 5-5z"/></svg>')
+          no-repeat right 0.75rem center;
+        background-size: 12px;
+      }
+
+      .avatar-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .avatar-container {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .avatar-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary);
+        box-shadow: var(--shadow-sm);
+        background: #e0e0e0;
+        transition: opacity 0.3s ease;
+      }
+
+      .avatar-preview.loading {
+        background: #e0e0e0
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" stroke="%23ccc" stroke-width="5" fill="none" stroke-dasharray="31.415, 31.415"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" keyTimes="0;1" values="0 25 25;360 25 25"/></circle></svg>')
+          center/40px no-repeat;
+      }
+
+      .avatar-container:hover .avatar-preview {
+        opacity: 0.8;
+      }
+
+      .avatar-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--primary);
+        color: var(--text-light);
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .avatar-container:hover .avatar-icon {
+        opacity: 1;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      .save-button {
+        background: var(--primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-md);
+        color: var(--text-light);
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .save-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .save-button:focus {
+        outline: 2px solid rgba(39, 174, 96, 0.4);
+        outline-offset: 2px;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        border-radius: var(--radius-md);
+        backdrop-filter: blur(3px);
+      }
+
+      .loading-spinner {
+        border: 4px solid rgba(39, 174, 96, 0.2);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .main-content.loading .loading-overlay {
+        display: flex;
+      }
+
+      .notification {
+        position: fixed;
+        top: calc(var(--header-height) + 1rem);
+        right: 1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-sm);
+        color: var(--text-light);
+        background: var(--primary);
+        box-shadow: var(--shadow-md);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transform: translateX(150%);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 400px;
+        border-left: 4px solid var(--primary-dark);
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.error,
+      .notification.logout {
+        background: var(--accent);
+        border-left: 4px solid var(--accent-dark);
+      }
+
+      .error-message {
+        text-align: center;
+        padding: 2rem;
+        background: #fff3cd;
+        border-radius: var(--radius-md);
+        color: #856404;
+      }
+
+      .error-message i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (min-width: 769px) {
+        .sidebar {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: var(--sidebar-width);
+        }
+        .hamburger {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        :root {
+          --sidebar-width: 240px;
+        }
+        .sidebar {
+          width: var(--sidebar-width);
+          padding: 1rem;
+        }
+        .content-container {
+          padding: 1.5rem;
+        }
+        .hamburger {
+          display: block;
+        }
+        .auth-button {
+          padding: 0.6rem 1rem;
+          font-size: 0.9rem;
+        }
+        .notification {
+          max-width: calc(100% - 3rem);
+        }
+        .page-content {
+          padding: 1.5rem;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .content-container {
+          padding: 1rem;
+        }
+        .main-content {
+          padding: 1rem;
+        }
+        .auth-button {
+          margin-right: 0.5rem;
+        }
+        .page-content {
+          padding: 1rem;
+        }
+        .save-button {
+          width: 100%;
+          justify-content: center;
+        }
+        .avatar-section {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div
+        class="hamburger"
+        id="sidebarToggle"
+        aria-label="Toggle navigation menu"
+      >
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="logo">
+        <a
+          href="admin-dashboard.html"
+          id="logoLink"
+          aria-label="Scanova Admin Home"
+        >
+          <img src="LOGO1.png" alt="Scanova Logo" />
+        </a>
+      </div>
+      <button
+        id="logoutBtn"
+        class="auth-button"
+        aria-label="Logout from admin account"
+      >
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+      <div class="profile-section">
+        <img
+          id="profile-picture"
+          class="profile-picture"
+          src="http://127.0.0.1:8000/media/avatars/default.png"
+          alt="Admin Profile Picture"
+        />
+        <div class="full-name" id="full-name">Loading...</div>
+        <div class="admin-tag">Admin</div>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <a href="overview.html" aria-label="View admin overview">
+              <i class="fas fa-home"></i> Overview
+            </a>
+          </li>
+          <li>
+            <a href="appointments.html" aria-label="View appointments">
+              <i class="fas fa-calendar-check"></i> Appointments
+            </a>
+          </li>
+          <li>
+            <a href="users.html" aria-label="Manage users">
+              <i class="fas fa-users"></i> User Management
+            </a>
+          </li>
+          <li>
+            <a href="scans.html" aria-label="Manage scans">
+              <i class="fas fa-x-ray"></i> Scan Management
+            </a>
+          </li>
+          <li>
+            <a href="tickets.html" aria-label="Manage tickets">
+              <i class="fas fa-ticket-alt"></i> Ticket Management
+            </a>
+          </li>
+          <li>
+            <a href="settings.html" aria-label="Admin settings" class="active">
+              <i class="fas fa-cog"></i> Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <main class="main-content" id="main-content">
+      <div class="content-container" id="content-container">
+        <div class="loading-overlay">
+          <div class="loading-spinner"></div>
+        </div>
+        <div class="page-content">
+          <div class="container">
+            <div class="section settings-section active" id="settings-section">
+              <h1>Admin Settings</h1>
+              <div id="notification" class="notification" role="alert">
+                <i class="fas fa-info-circle"></i>
+                <span id="notification-message"></span>
+              </div>
+              <form id="profile-form" enctype="multipart/form-data">
+                <div class="form-group full-width">
+                  <label for="avatar" class="label-optional avatar-label"
+                    >Profile Picture</label
+                  >
+                  <div class="avatar-section">
+                    <div class="avatar-container">
+                      <img
+                        id="avatar-preview"
+                        class="avatar-preview loading"
+                        src="http://127.0.0.1:8000/media/avatars/default.png"
+                        alt="Profile Picture"
+                      />
+                      <i class="fas fa-user avatar-icon"></i>
+                    </div>
+                    <input
+                      type="file"
+                      id="avatar"
+                      name="avatar"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="full_name" class="label-required"
+                      >Full Name</label
+                    >
+                    <input
+                      type="text"
+                      id="full_name"
+                      name="full_name"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="email" class="label-required">Email</label>
+                    <input type="email" id="email" name="email" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="phone" class="label-required"
+                      >Phone Number</label
+                    >
+                    <input type="tel" id="phone" name="phone" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="date_of_birth" class="label-required"
+                      >Date of Birth</label
+                    >
+                    <input
+                      type="date"
+                      id="date_of_birth"
+                      name="date_of_birth"
+                      required
+                    />
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="password" class="label-optional"
+                      >New Password (leave blank to keep current)</label
+                    >
+                    <input type="password" id="password" name="password" />
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="confirm_password" class="label-optional"
+                      >Confirm New Password</label
+                    >
+                    <input
+                      type="password"
+                      id="confirm_password"
+                      name="confirm_password"
+                    />
+                  </div>
+                </div>
+                <button type="submit" class="save-button">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="text/javascript" src="auth.js"></script>
+    <script>
+      // Global variables
+      const sidebar = document.getElementById("sidebar");
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      const logoLink = document.getElementById("logoLink");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const mainContent = document.getElementById("main-content");
+      const notification = document.getElementById("notification");
+      const notificationMessage = document.getElementById(
+        "notification-message"
+      );
+      const profilePicture = document.getElementById("profile-picture");
+      const fullName = document.getElementById("full-name");
+      const profileForm = document.getElementById("profile-form");
+      const avatarPreview = document.getElementById("avatar-preview");
+
+      // Show notification function
+      function showNotification(message, type = "success") {
+        notificationMessage.textContent = message;
+        const isLogout = message === "Logging out...";
+        notification.className = `notification ${type}${
+          isLogout ? " logout" : ""
+        }`;
+        notification.style.display = "flex";
+        setTimeout(() => {
+          notification.classList.add("show");
+        }, 10);
+        setTimeout(() => {
+          notification.classList.remove("show");
+          setTimeout(() => {
+            notification.style.display = "none";
+            notification.classList.remove("logout");
+          }, 400);
+        }, 3000);
+      }
+
+      // Toggle sidebar function
+      function toggleSidebar() {
+        sidebar.classList.toggle("active");
+        const isVisible = sidebar.classList.contains("active");
+        sidebarToggle.setAttribute("aria-expanded", isVisible);
+      }
+
+      // Load fallback avatar
+      function loadFallbackAvatar() {
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        console.log("Loading fallback avatar");
+        avatarPreview.src = defaultAvatar;
+        profilePicture.src = defaultAvatar;
+        avatarPreview.onerror = () => {
+          console.error("Fallback avatar failed to load:", defaultAvatar);
+          avatarPreview.classList.remove("loading");
+        };
+        avatarPreview.onload = () => {
+          console.log("Fallback avatar loaded successfully");
+          avatarPreview.classList.remove("loading");
+        };
+      }
+
+      // Load profile data with retry
+      async function loadProfileData() {
+        console.log("Loading Admin Settings page");
+        const token = localStorage.getItem("token");
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        if (!token) {
+          showNotification("No token found. Redirecting to login.", "error");
+          setTimeout(() => {
+            window.location.href = "admin-login.html";
+          }, 3000);
+          return null;
+        }
+
+        // Fallback to localStorage user data
+        let cachedData = null;
+        try {
+          const user = localStorage.getItem("user");
+          if (user) {
+            cachedData = JSON.parse(user);
+            console.log(
+              "Using cached user data:",
+              JSON.stringify(cachedData, null, 2)
+            );
+            populateForm(cachedData);
+          }
+        } catch (error) {
+          console.warn("Failed to parse cached user data:", error);
+        }
+
+        avatarPreview.classList.add("loading");
+        const maxRetries = 2;
+        let attempt = 0;
+
+        while (attempt <= maxRetries) {
+          try {
+            console.log(
+              `Fetching profile data from API (Attempt ${attempt + 1})`
+            );
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/profile/update/",
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log("API response status:", response.status);
+            if (!response.ok) {
+              if (response.status === 403 || response.status === 401) {
+                if (attempt < maxRetries) {
+                  console.log("Token expired, attempting to refresh");
+                  try {
+                    const newToken = await window.refreshToken();
+                    localStorage.setItem("token", newToken);
+                    attempt++;
+                    continue;
+                  } catch (refreshError) {
+                    console.error("Token refresh failed:", refreshError);
+                    showNotification(
+                      "Session expired. Please log in again.",
+                      "error"
+                    );
+                    setTimeout(() => {
+                      localStorage.removeItem("token");
+                      window.location.href = "admin-login.html";
+                    }, 3000);
+                    return null;
+                  }
+                } else {
+                  showNotification(
+                    "Session expired. Please log in again.",
+                    "error"
+                  );
+                  setTimeout(() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "admin-login.html";
+                  }, 3000);
+                  return null;
+                }
+              }
+              throw new Error(
+                `HTTP ${response.status}: Failed to fetch profile`
+              );
+            }
+            const data = await response.json();
+            console.log("Profile API response:", JSON.stringify(data, null, 2));
+            if (!data.is_staff) {
+              showNotification("Access denied. Admins only.", "error");
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "MAIN.html";
+              return null;
+            }
+            localStorage.setItem("user", JSON.stringify(data));
+            populateForm(data);
+            return data;
+          } catch (error) {
+            console.error(
+              `Error loading profile (Attempt ${attempt + 1}):`,
+              error
+            );
+            if (attempt === maxRetries) {
+              showNotification(
+                `Error loading profile: ${error.message}`,
+                "error"
+              );
+              loadFallbackAvatar();
+              return cachedData;
+            }
+            attempt++;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
+      }
+
+      // Populate form fields
+      function populateForm(data) {
+        if (!data) {
+          console.warn("No data to populate form");
+          return;
+        }
+        console.log(
+          "Populating form with data:",
+          JSON.stringify(data, null, 2)
+        );
+        console.log("Setting full_name:", data.full_name || "");
+        console.log("Setting email:", data.email || "");
+        console.log("Setting phone:", data.profile?.phone || "");
+        console.log(
+          "Setting date_of_birth:",
+          data.profile?.date_of_birth || ""
+        );
+        console.log("Setting avatar:", data.profile?.avatar || "default");
+
+        document.getElementById("full_name").value = data.full_name || "";
+        document.getElementById("email").value = data.email || "";
+        document.getElementById("phone").value = data.profile?.phone || "";
+        document.getElementById("date_of_birth").value =
+          data.profile?.date_of_birth || "";
+        fullName.textContent = data.full_name || "Admin";
+
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        const avatarPath = data.profile?.avatar;
+        const avatarUrl =
+          avatarPath && avatarPath !== "" && avatarPath !== null
+            ? `http://127.0.0.1:8000${
+                avatarPath.startsWith("/") ? "" : "/"
+              }${avatarPath}?t=${new Date().getTime()}`
+            : defaultAvatar;
+        console.log("Setting avatar URL:", avatarUrl);
+        avatarPreview.src = avatarUrl;
+        profilePicture.src = avatarUrl;
+        avatarPreview.onerror = () => {
+          console.error(
+            "Avatar failed to load, falling back to default:",
+            avatarUrl
+          );
+          avatarPreview.src = defaultAvatar;
+          profilePicture.src = defaultAvatar;
+          avatarPreview.classList.remove("loading");
+        };
+        avatarPreview.onload = () => {
+          console.log("Avatar loaded successfully:", avatarUrl);
+          avatarPreview.classList.remove("loading");
+        };
+
+        if (!data.profile?.phone || !data.profile?.date_of_birth) {
+          showNotification(
+            "Please complete your profile by filling in the required fields (Phone Number and Date of Birth).",
+            "error"
+          );
+        }
+      }
+
+      // Handle avatar image click
+      avatarPreview.addEventListener("click", () => {
+        console.log("Avatar image clicked");
+        document.getElementById("avatar").click();
+      });
+
+      // Preview avatar on file selection
+      document.getElementById("avatar").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          console.log("Avatar file selected:", file.name, file.size, file.type);
+          const reader = new FileReader();
+          reader.onload = () => {
+            avatarPreview.src = reader.result;
+            avatarPreview.classList.remove("loading");
+            console.log(
+              "Local avatar preview loaded from file input:",
+              file.name
+            );
+          };
+          reader.readAsDataURL(file);
+        } else {
+          console.log("No avatar file selected");
+        }
+      });
+
+      // Handle form submission
+      profileForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log("Submitting profile form");
+        const token = localStorage.getItem("token");
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        const password = document.getElementById("password").value.trim();
+        const confirmPassword = document
+          .getElementById("confirm_password")
+          .value.trim();
+
+        if (password && password !== confirmPassword) {
+          showNotification("New passwords do not match.", "error");
+          return;
+        }
+
+        const formData = new FormData();
+        const fullName = document.getElementById("full_name").value.trim();
+        const [firstName, ...lastName] = fullName.split(" ");
+        formData.append("first_name", firstName || "");
+        formData.append("last_name", lastName.join(" ") || "");
+        formData.append("email", document.getElementById("email").value.trim());
+        formData.append(
+          "profile[phone]",
+          document.getElementById("phone").value.trim()
+        );
+        formData.append(
+          "profile[date_of_birth]",
+          document.getElementById("date_of_birth").value
+        );
+        const avatar = document.getElementById("avatar").files[0];
+        if (avatar) {
+          formData.append("profile[avatar]", avatar);
+          console.log(
+            "Uploading avatar:",
+            avatar.name,
+            avatar.size,
+            avatar.type
+          );
+        } else {
+          console.log("No avatar file selected for upload");
+        }
+
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+          console.log(`${key}: ${value instanceof File ? value.name : value}`);
+        }
+
+        mainContent.classList.add("loading");
+        try {
+          console.log("Sending PUT request to update profile");
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/profile/update/",
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            }
+          );
+          const data = await response.json();
+          console.log("PUT response:", JSON.stringify(data, null, 2));
+          if (!response.ok) {
+            if (response.status === 403 || response.status === 401) {
+              try {
+                const newToken = await window.refreshToken();
+                localStorage.setItem("token", newToken);
+                const retryResponse = await fetch(
+                  "http://127.0.0.1:8000/api/profile/update/",
+                  {
+                    method: "PUT",
+                    headers: {
+                      Authorization: `Bearer ${newToken}`,
+                    },
+                    body: formData,
+                  }
+                );
+                const retryData = await retryResponse.json();
+                if (!retryResponse.ok) {
+                  throw new Error(
+                    retryData.message ||
+                      JSON.stringify(retryData.errors) ||
+                      "Failed to update profile after token refresh"
+                  );
+                }
+                await handleSuccessfulProfileUpdate(retryData);
+              } catch (refreshError) {
+                console.error("Token refresh failed:", refreshError);
+                throw new Error("Session expired. Please log in again.");
+              }
+            } else {
+              throw new Error(
+                data.message ||
+                  JSON.stringify(data.errors) ||
+                  "Failed to update profile"
+              );
+            }
+          } else {
+            await handleSuccessfulProfileUpdate(data);
+          }
+
+          // Handle password change if provided
+          if (password) {
+            try {
+              console.log("Sending POST request to change password");
+              const passwordResponse = await fetch(
+                "http://127.0.0.1:8000/api/change-password/",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({
+                    old_password: password, // Note: Assuming current password is same as new for simplicity
+                    new_password: password,
+                  }),
+                }
+              );
+              if (!passwordResponse.ok) {
+                const passwordData = await passwordResponse.json();
+                throw new Error(
+                  passwordData.message ||
+                    JSON.stringify(passwordData.errors) ||
+                    "Failed to change password"
+                );
+              }
+              showNotification("Password changed successfully!", "success");
+            } catch (passwordError) {
+              console.error("Error changing password:", passwordError);
+              showNotification(
+                `Error changing password: ${passwordError.message}`,
+                "error"
+              );
+            }
+          }
+        } catch (error) {
+          console.error("Error updating profile:", error);
+          showNotification(`Error: ${error.message}`, "error");
+          loadFallbackAvatar();
+        } finally {
+          mainContent.classList.remove("loading");
+        }
+      });
+
+      // Handle successful profile update
+      async function handleSuccessfulProfileUpdate(data) {
+        localStorage.setItem("user", JSON.stringify(data));
+        const defaultAvatar = "http://127.0.0.1:8000/media/avatars/default.png";
+        const avatarPath = data.profile?.avatar;
+        const avatarUrl =
+          avatarPath && avatarPath !== "" && avatarPath !== null
+            ? `http://127.0.0.1:8000${
+                avatarPath.startsWith("/") ? "" : "/"
+              }${avatarPath}?t=${new Date().getTime()}`
+            : defaultAvatar;
+        console.log("Post-update avatar URL:", avatarUrl);
+        avatarPreview.src = avatarUrl;
+        profilePicture.src = avatarUrl;
+        avatarPreview.onerror = () => {
+          console.error(
+            "Post-update avatar failed to load, falling back to default:",
+            avatarUrl
+          );
+          avatarPreview.src = defaultAvatar;
+          profilePicture.src = defaultAvatar;
+          avatarPreview.classList.remove("loading");
+        };
+        avatarPreview.onload = () => {
+          console.log("Post-update avatar loaded successfully:", avatarUrl);
+          avatarPreview.classList.remove("loading");
+        };
+        fullName.textContent = data.full_name || "Admin";
+        showNotification("Profile updated successfully!", "success");
+        document.getElementById("password").value = "";
+        document.getElementById("confirm_password").value = "";
+        document.dispatchEvent(new Event("profileUpdated"));
+      }
+
+      // Event listeners
+      sidebarToggle.addEventListener("click", toggleSidebar);
+
+      logoutBtn.addEventListener("click", () => {
+        showNotification("Logging out...");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setTimeout(() => {
+          window.location.href = "admin-login.html";
+        }, 1000);
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadFallbackAvatar();
+        loadProfileData();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scanova - Premium</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #27ae60;
+        --primary-dark: #219653;
+        --secondary: #4db6ac;
+        --accent: #e74c3c;
+        --accent-dark: #c0392b;
+        --bg-light: #f5f7fa;
+        --text-dark: #2c3e50;
+        --text-light: #ffffff;
+        --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.12);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --border-radius: 10px;
+        --transition: all 0.3s ease;
+      }
+
+      .page-content * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", Arial, sans-serif;
+      }
+
+      .page-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      .page-content h2 {
+        font-size: 2.5rem;
+        color: var(--text-dark);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        position: relative;
+        display: inline-block;
+      }
+
+      .page-content h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .page-content .premium-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: start;
+        margin-top: 2.5rem;
+      }
+
+      .page-content .plan {
+        background: var(--text-light);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .page-content .plan:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+      }
+
+      .page-content .premium-plan {
+        border-color: var(--primary);
+        transform: scale(1.05);
+      }
+
+      .page-content .premium-plan:hover {
+        transform: scale(1.05) translateY(-10px);
+      }
+
+      .page-content .premium-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--primary);
+        color: var(--text-light);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transform: rotate(45deg) translateX(1.5rem) translateY(-1rem);
+        width: 150px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .page-content .plan .plan-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+        text-align: center;
+      }
+
+      .page-content .plan .plan-price {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .page-content .plan .plan-price span {
+        font-size: 1.2rem;
+        color: #555;
+      }
+
+      .page-content .plan ul {
+        list-style: none;
+        margin-bottom: 2rem;
+        text-align: left;
+      }
+
+      .page-content .plan ul li {
+        margin-bottom: 0.8rem;
+        padding-left: 1.5rem;
+        position: relative;
+        color: #555;
+        font-size: 1rem;
+      }
+
+      .page-content .plan ul li::before {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: var(--primary);
+        position: absolute;
+        left: 0;
+      }
+
+      .page-content .payment-form {
+        background: var(--text-light);
+        padding: 2.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .page-content .payment-form h3 {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .page-content .payment-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-dark);
+      }
+
+      .page-content .payment-form input {
+        width: 100%;
+        padding: 14px;
+        margin: 12px 0;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        font-size: 1rem;
+      }
+
+      .page-content .payment-form input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 8px rgba(39, 174, 96, 0.3);
+        outline: none;
+      }
+
+      .page-content .upgrade-button {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--primary);
+        color: var(--text-light);
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease,
+          box-shadow 0.3s ease;
+        margin-top: 10px;
+        letter-spacing: 0.5px;
+      }
+
+      .page-content .upgrade-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+      }
+
+      /* Ensure dashboard's logout button retains its style */
+      #logoutBtn.auth-button {
+        background-color: var(--accent);
+        padding: 0.7rem 1.3rem;
+        border-radius: 18px;
+        color: var(--text-light);
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #logoutBtn.auth-button:hover {
+        background-color: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      @media (max-width: 768px) {
+        .page-content .premium-container {
+          grid-template-columns: 1fr;
+        }
+
+        .page-content {
+          padding: 1rem;
+        }
+
+        .page-content h2 {
+          font-size: 1.75rem;
+        }
+
+        .page-content .premium-plan {
+          transform: scale(1);
+        }
+
+        .page-content .premium-plan:hover {
+          transform: translateY(-10px);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-content .plan .plan-price {
+          font-size: 2.5rem;
+        }
+
+        .page-content .plan .plan-name {
+          font-size: 1.5rem;
+        }
+
+        .page-content .payment-form input,
+        .page-content .payment-form .upgrade-button {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="premium-page">
+      <div class="page-content">
+        <h2>Upgrade to Scanova Premium</h2>
+        <div class="premium-container">
+          <div class="plan premium-plan">
+            <div class="premium-badge">Popular</div>
+            <div class="plan-name">Premium</div>
+            <div class="plan-price">$24.99<span>/month</span></div>
+            <ul>
+              <li>Unlimited scan analyses</li>
+              <li>Instant results delivery</li>
+              <li>Detailed reports with recommendations</li>
+              <li>Binary and multiclass detection</li>
+              <li>Upload your own scan</li>
+              <li>24/7 priority support</li>
+              <li>Advanced data security & extended storage</li>
+            </ul>
+          </div>
+          <div class="payment-form">
+            <h3>Enter Payment Information</h3>
+            <form id="payment-form">
+              <label for="card-number">Card Number</label>
+              <input
+                type="text"
+                id="card-number"
+                name="card_number"
+                placeholder="1234 5678 9012 3456"
+                maxlength="16"
+                required
+              />
+              <label for="card-holder">Card Holder Name</label>
+              <input
+                type="text"
+                id="card-holder"
+                name="card_holder"
+                placeholder="John Doe"
+                required
+              />
+              <label for="expiry-date">Expiry Date</label>
+              <input
+                type="text"
+                id="expiry-date"
+                name="expiry_date"
+                placeholder="MM/YY"
+                maxlength="5"
+                required
+              />
+              <label for="cvv">CVV</label>
+              <input
+                type="text"
+                id="cvv"
+                name="cvv"
+                placeholder="123"
+                maxlength="4"
+                required
+              />
+              <button type="submit" class="upgrade-button">Upgrade Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const form = document.getElementById("payment-form");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem("token");
+        if (!token) {
+          showNotification("Please log in to upgrade.", true);
+          setTimeout(() => (window.location.href = "MAIN.html"), 1000);
+          return;
+        }
+
+        const formData = new FormData(form);
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/premium/upgrade/",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            }
+          );
+          const data = await response.json();
+          if (response.ok) {
+            showNotification(data.message);
+            // Update local user data
+            const userResponse = await fetch(
+              "http://127.0.0.1:8000/api/profile/update/",
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            const userData = await userResponse.json();
+            localStorage.setItem("user", JSON.stringify(userData));
+            // Trigger profile update event
+            document.dispatchEvent(new Event("profileUpdated"));
+            setTimeout(
+              () => window.parent.loadPage("profile-center.html"),
+              1000
+            );
+          } else {
+            showNotification(
+              data.message || "Failed to process payment.",
+              true
+            );
+          }
+        } catch (error) {
+          console.error("Upgrade error:", error);
+          showNotification(
+            "Error connecting to server. Please try again.",
+            true
+          );
+        }
+      });
+
+      // Notification function aligned with dashboard.html
+      function showNotification(message, isError = false) {
+        const notification =
+          document.getElementById("notification") ||
+          window.parent.document.getElementById("notification");
+        const notificationMessage =
+          document.getElementById("notification-message") ||
+          window.parent.document.getElementById("notification-message");
+        if (notification && notificationMessage) {
+          notificationMessage.textContent = message;
+          notification.classList.remove("error", "logout");
+          if (isError) {
+            notification.classList.add("error");
+          } else if (message === "Logging out...") {
+            notification.classList.add("logout");
+          }
+          notification.classList.add("show");
+          setTimeout(() => {
+            notification.classList.remove("show");
+            notification.classList.remove("error", "logout");
+          }, 3000);
+        } else {
+          alert(message);
+        }
+      }
+    </script>
+  </body>
+</html>
